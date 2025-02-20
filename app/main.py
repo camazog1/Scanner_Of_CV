@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.routes import scan, upload, processing
+from app.routes import scan, upload
 
 app = FastAPI()
 
 app.include_router(scan.router) 
 app.include_router(upload.router)
-app.include_router(processing.router)
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
