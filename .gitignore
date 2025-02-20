@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+uploads/
+test.py
+test2.py
