@@ -4,5 +4,5 @@ __pycache__/
 *.pyo
 .env
 uploads/
-test.py
-test2.py
+google_credentials.json
+.env

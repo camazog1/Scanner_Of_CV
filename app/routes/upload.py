@@ -15,11 +15,16 @@ async def upload_file(file: UploadFile = File(...)):
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Formato no permitido")
     
-    file.filename = file.filename.replace(" ", "_")
+    file_extension = Path(file.filename).suffix
+
+    if file_extension != ".pdf":
+        file_extension = ".png" 
+    
+    file.filename = f"file{file_extension}"
 
     file_path = UPLOAD_DIR / file.filename  
     
     with file_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)  
 
-    return {"filename": file.filename, "content_type": file.content_type, "path": str(file_path), "URL": f"/files/{file.filename}"}
+    return {"filename": file.filename, "content_type": file.content_type, "path": str(file_path)}
