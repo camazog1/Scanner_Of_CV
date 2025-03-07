@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from google.cloud import vision
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -6,6 +7,8 @@ from pathlib import Path
 import os
 import shutil
 import fitz
+import json
+import re
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "google_credentials.json"
 load_dotenv()
@@ -23,11 +26,16 @@ async def extract_text(path: str):
     else:
         response = "File extension not supported."
 
-    return {"response": response}
+    # Eliminar ```json
+    response = response.replace("```json","").replace("```", "").removeprefix("\n").removesuffix("\n")
+    print(response)
+    data = json.loads(response)
+
+    return data
 
 def extract_text_image():
     client_vision = vision.ImageAnnotatorClient()
-    path_image = "uploads/image.png"
+    path_image = "uploads/file.png"
 
     with open(path_image, 'rb') as image_file:
         file = image_file.read()
@@ -43,11 +51,19 @@ def extract_text_image():
         base_url = os.getenv("DEEPSEEK_BASE_URL")
         client_deepseek = OpenAI(api_key=api_key, base_url=base_url)
 
+        with open('docs/schema.json', 'r') as f:
+            schema_content = json.dumps(json.load(f)) 
+
+        with open('docs/schema_with_example.json', 'r') as f:
+            schema_example_content = json.dumps(json.load(f)) 
+
         response_deepseek = client_deepseek.chat.completions.create(
             model="deepseek-chat",
             messages=[
-                {"role": "user", "content": "Organize and correct the following text, without adding additional information or explanations. Only the organized and corrected text is returned:"},
-                {"role": "user", "content": extracted_text}
+                {"role": "user", "content": "Organize and correct the following extracted text into the provided schema format (schema.json) without adding additional information or explanations. Use the schema_with_example.json as a reference for how the schema should be filled. Only return the organized and corrected text in the required schema format."},
+                {"role": "user", "content": f"Schema: {schema_content}"},
+                {"role": "user", "content": f"Schema Example: {schema_example_content}"},
+                {"role": "user", "content": f"Extracted Text: {extracted_text}"}
             ],
             stream=False
         )
@@ -76,11 +92,19 @@ def extract_text_pdf():
         base_url = os.getenv("DEEPSEEK_BASE_URL")
         client_deepseek = OpenAI(api_key=api_key, base_url=base_url)
 
+        with open('docs/schema.json', 'r') as f:
+            schema_content = json.dumps(json.load(f)) 
+
+        with open('docs/schema_with_example.json', 'r') as f:
+            schema_example_content = json.dumps(json.load(f)) 
+
         response_deepseek = client_deepseek.chat.completions.create(
             model="deepseek-chat",
             messages=[
-                {"role": "user", "content": "Organize and correct the following text, without adding additional information or explanations. Only the organized and corrected text is returned:"},
-                {"role": "user", "content": extracted_text}
+                {"role": "user", "content": "Organize and correct the following extracted text into the provided schema format (schema.json) without adding additional information or explanations. Use the schema_with_example.json as a reference for how the schema should be filled. Only return the organized and corrected text in the required schema format."},
+                {"role": "user", "content": f"Schema: {schema_content}"},
+                {"role": "user", "content": f"Schema Example: {schema_example_content}"},
+                {"role": "user", "content": f"Extracted Text: {extracted_text}"}
             ],
             stream=False
         )
