@@ -54,11 +54,11 @@ body {
 
 .button-style i {
     font-size: 40px;
-    margin-bottom: 10px; /* Empuja el texto hacia abajo */
+    margin-bottom: 10px; 
 }
 
 .button-style span {
-    margin-top: -5px; /* Ajusta el texto para que no quede tan pegado al icono */
+    margin-top: -5px; 
 }
 
 .button-style:hover {
@@ -88,7 +88,7 @@ body {
 
 .button-style span {
     margin-top: -5px;
-    color: #000000; /* Ajusta el texto para que no quede tan pegado al icono */
+    color: #000000;
 }
 
 @media (min-width: 768px) {
@@ -99,13 +99,13 @@ body {
 }
 
 .dashboard-container {
-    margin-top: 80px; /* Ajusta según la altura del Header */
+    margin-top: 80px; 
     padding: 20px;
     text-align: center;
 }
 
 .guide-container {
-    margin-top: 80px; /* Ajusta según la altura del Header */
+    margin-top: 80px; 
     padding: 20px;
     text-align: center;
 }
@@ -136,8 +136,6 @@ body {
     height: 50px;
 }
 
-
-/* Para dispositivos móviles (menos de 768px) */
 @media (max-width: 768px) {
     .header-container {
         top: unset;
@@ -145,7 +143,7 @@ body {
     }
 
     body {
-        padding-bottom: 60px; /* Agregar espacio en la parte inferior para el header */
+        padding-bottom: 60px; 
     }
 }
 
