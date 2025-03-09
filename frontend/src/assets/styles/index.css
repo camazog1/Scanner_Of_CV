@@ -40,7 +40,7 @@ body {
     justify-content: center;
     width: 220px;
     height: 220px;
-    background-color: #9AD9B0;
+    background-color: #ffffff;
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -62,13 +62,13 @@ body {
 }
 
 .button-style:hover {
-    background-color: #29D967;
+    background-color: #dcdcdc;
     transform: scale(1.05);
 }
 
 
 .button-style:hover {
-    background-color: #29D967;
+    background-color: #d8d8d8;
     transform: scale(1.05);
 }
 
@@ -81,12 +81,14 @@ body {
 }
 
 .button-style i {
-    font-size: 70px; /* Ajusta el tamaño del icono */
-    margin-bottom: 10px; /* Separa el icono del texto */
+    font-size: 70px; 
+    margin-bottom: 10px;
+    color: #29D967;
 }
 
 .button-style span {
-    margin-top: -5px; /* Ajusta el texto para que no quede tan pegado al icono */
+    margin-top: -5px;
+    color: #000000; /* Ajusta el texto para que no quede tan pegado al icono */
 }
 
 @media (min-width: 768px) {
