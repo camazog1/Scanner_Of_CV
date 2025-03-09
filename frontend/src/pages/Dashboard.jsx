@@ -1,6 +1,6 @@
 function Dashboard() {
     return (
-      <div>
+      <div className="dashboard-container">
         <h1>Dashboard</h1>
         <p>Bienvenido al dashboard</p>
       </div>
@@ -8,4 +8,5 @@ function Dashboard() {
 }
   
 export default Dashboard;
+
   
