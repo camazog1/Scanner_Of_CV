@@ -5,4 +5,5 @@ google-cloud-vision
 openai
 python-dotenv
 fitz
-react + vite
+pymupdf
+

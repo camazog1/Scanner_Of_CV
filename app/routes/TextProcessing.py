@@ -15,6 +15,15 @@ load_dotenv()
 
 router = APIRouter()
 
+# Función para guardar el JSON en un archivo
+def save_json(data, filename):
+    json_storage_dir = Path("json_storage")
+    json_storage_dir.mkdir(exist_ok=True)  # Crear el directorio si no existe
+    file_path = json_storage_dir / filename
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+    return str(file_path)
+
 @router.get("/extract_text")
 async def extract_text(path: str):
     file_extension = Path(path).suffix
@@ -31,7 +40,11 @@ async def extract_text(path: str):
     print(response)
     data = json.loads(response)
 
-    return data
+    # Guardar el JSON generado
+    json_filename = "transcribed.json"
+    json_path = save_json(data, json_filename)
+
+    return data  # Devuelve el JSON sin cambios
 
 def extract_text_image():
     client_vision = vision.ImageAnnotatorClient()
