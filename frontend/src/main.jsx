@@ -7,8 +7,9 @@ import About from '@pages/About.jsx'
 import FileUpload from '@pages/FileUpload.jsx'
 import Guide from '@pages/Guide.jsx'
 import MainLayout from '@layouts/MainLayout.jsx'
+import CameraPage from './pages/CameraPage.jsx'
+import FilePreview from './pages/FilePreview.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,8 @@ const router = createBrowserRouter([
       { path: "/file-upload", element: <FileUpload /> },
       { path: "/about", element: <About /> },
       { path: "/guide", element: <Guide /> },
+      { path: "/camera", element: <CameraPage /> },
+      { path: "/file-preview", element: <FilePreview /> },
     ]
   }
 ]);
