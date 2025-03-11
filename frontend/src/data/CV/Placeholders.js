@@ -1,14 +1,14 @@
-const RAW_JSON = {
+const CV_PLACEHOLDERS = {
     "basics": {
       "name": "John Doe",
       "label": "Programmer",
-      //"image": "",
+      "image": "",
       "email": "john@gmail.com",
       "phone": "(912) 555-4321",
       "url": "https://johndoe.com",
       "summary": "A summary of John Doe…",
       "location": {
-        "countryCode": "USA",
+        "countryCode": "US",
         "region": "California",
         "city": "San Francisco",
         "postalCode": "CA 94115",
@@ -109,4 +109,5 @@ const RAW_JSON = {
     }]
   }
 
-export default RAW_JSON;
+
+export default CV_PLACEHOLDERS;
