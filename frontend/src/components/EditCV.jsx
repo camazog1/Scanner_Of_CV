@@ -1,9 +1,12 @@
+/*
+ This component serve the purpose to provide an interface to render the CV fields retrieved from the back, it consumes an static JSON object to know which fields to render and their values, it also uses a translation object to render the labels in the correct language, and a placeholder object to provide examples of the expected input for each field.
+*/
 import React, { useState, useEffect } from "react";
 import RAW_JSON from "@data/mock/RawJson";
 import TRANSLATIONS from "@data/CV/Translations";
 import CV_PLACEHOLDERS from "../data/CV/Placeholders";
 
-// Sections allowed to have dynamic add/remove functionality
+// Sections allowed to have dynamic add/remove functionality (Mapped from RAW_JSON)
 const ALLOWED_SECTIONS = [
   "profiles",
   "work",
@@ -40,21 +43,32 @@ function EditCV() {
     });
   };
 
-  // Adds a new item to an array-based section
-  const handleAddItem = (path, template, event) => {
-    event.preventDefault();
-    setData((prevData) => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      let ref = newData;
-      const keys = path.split(".");
-      keys.forEach((key, index) => {
-        if (!ref[key]) ref[key] = index === keys.length - 1 ? [] : {};
-        ref = ref[key];
-      });
-      ref.push(JSON.parse(JSON.stringify(template))); // Clone template to avoid reference issues
-      return newData;
-    });
+  const handleAddItem = (path) => {
+      setData((prevData) => {
+        const newData = JSON.parse(JSON.stringify(prevData)); // Deep copy of current state
+        const baseTemplate = JSON.parse(JSON.stringify(RAW_JSON)); // Deep copy of RAW_JSON
+        let ref = newData;
+        let templateRef = baseTemplate;
+  
+        // Traverse the path to find the correct section
+        const keys = path.split(".");
+        keys.forEach((key, index) => {
+          if (!ref[key]) ref[key] = index === keys.length - 1 ? [] : {};
+          ref = ref[key];
+          templateRef = templateRef[key]; // Get the corresponding base structure
+        });
+  
+        // Push a new item based on the base structure
+        if (Array.isArray(templateRef)) {
+          ref.push(JSON.parse(JSON.stringify(templateRef[0]))); // Clone the first item in the base structure
+        } else {
+          console.error("Template for the section is not an array.");
+        }
+  
+        return newData;
+      })
   };
+
 
   // Removes an item from an array-based section
   const handleRemoveItem = (path, index, event) => {
@@ -177,6 +191,7 @@ function renderFields(
             ),
           )}
           <button
+           type="button"
             className="btn btn-success mt-2"
             onClick={(e) => handleAddItem(newPath, template, e)}
           >

@@ -1,5 +1,5 @@
 import React from "react";
-import EditCV from "@components/EditCV";
+import EditCV from "@components/EditCV2";
 
 function FileUpload() {
   const [file, setFile] = React.useState(null);
