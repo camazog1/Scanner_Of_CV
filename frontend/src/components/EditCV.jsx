@@ -105,7 +105,7 @@ function EditCV() {
                 </div>
             </form>
         </div>
-    );
+  );
 }
 
 function renderSection(sectionData, section, handleChange, handleAddItem, handleRemoveItem) {
