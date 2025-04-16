@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RAW_JSON from "@data/mock/RawJson";
 import TRANSLATIONS from "@data/CV/Translations";
-import CV_PLACEHOLDERS from "../data/CV/Placeholders";
+import CV_PLACEHOLDERS from "@data/CV/Placeholders";
 
 const SECTIONS = Object.keys(RAW_JSON);
 
@@ -13,37 +13,58 @@ function EditCV() {
         setData(JSON.parse(JSON.stringify(RAW_JSON)));
     }, []);
 
-    const handleChange = (section, index, key, value) => {
+    const handleChange = (section, index, key, value, subKey = null) => {
         setData((prevData) => {
             const newData = JSON.parse(JSON.stringify(prevData));
-            if (Array.isArray(newData[section])) {
+
+            if (subKey) {
+                // Caso especial: subsección como profiles dentro de basics
+                newData[section][key][index][subKey] = value;
+            } else if (Array.isArray(newData[section])) {
                 newData[section][index][key] = value;
             } else {
                 newData[section][key] = value;
             }
+
             return newData;
         });
     };
 
-    const handleAddItem = (section) => {
+    const handleAddItem = (section, subkey = null) => {
         setData((prevData) => {
             const newData = JSON.parse(JSON.stringify(prevData));
-            if (!Array.isArray(newData[section])) newData[section] = [];
-            const template = Array.isArray(RAW_JSON[section]) ? RAW_JSON[section][0] || {} : {};
-            newData[section].push(JSON.parse(JSON.stringify(template)));
+
+            if (subkey) {
+                if (!Array.isArray(newData[section][subkey])) newData[section][subkey] = [];
+                const template = Array.isArray(RAW_JSON[section][subkey])
+                    ? RAW_JSON[section][subkey][0] || {}
+                    : {};
+                newData[section][subkey].push(JSON.parse(JSON.stringify(template)));
+            } else {
+                if (!Array.isArray(newData[section])) newData[section] = [];
+                const template = Array.isArray(RAW_JSON[section])
+                    ? RAW_JSON[section][0] || {}
+                    : {};
+                newData[section].push(JSON.parse(JSON.stringify(template)));
+            }
+
             return newData;
         });
     };
 
-    const handleRemoveItem = (section, index) => {
+
+    const handleRemoveItem = (section, index, subkey = null) => {
         setData((prevData) => {
             const newData = JSON.parse(JSON.stringify(prevData));
-            if (Array.isArray(newData[section])) {
+            if (subkey && Array.isArray(newData[section][subkey])) {
+                newData[section][subkey].splice(index, 1);
+            } else if (Array.isArray(newData[section])) {
                 newData[section].splice(index, 1);
             }
             return newData;
         });
     };
+
 
     const handleSubmit = () => {
         console.log("Submitted Data:", JSON.stringify(data, null, 2));
@@ -55,19 +76,27 @@ function EditCV() {
     return (
         <div className="container-fluid w-100 vh-100 p-4 bg-light">
             <h1 className="text-center mb-4 mt-4">Editar CV</h1>
-            <div className="d-flex justify-content-center mb-4">
-                {SECTIONS.map((_, index) => (
-                    <div
-                        key={index}
-                        className={`mx-1 w-3 h-3 rounded-full ${
-                            step === index ? "bg-secondary scale-125" : "bg-secondary"
-                        }`}
-                    ></div>
-                ))}
+            <div className="mt-4">
+                <label htmlFor="formstep" className="form-label bg-info rounded text-white p-2">
+                    <b>
+                        {TRANSLATIONS[SECTIONS[step]]}
+                    </b>
+                </label>
+                <input
+                    name="formstep"
+                    type="range"
+                    min="0"
+                    max={SECTIONS.length - 1}
+                    value={step}
+                    onChange={(e) => setStep(parseInt(e.target.value))}
+                    className="form-range"
+                />
             </div>
-            <form>
+
+            {/* <!-- Navigation form  --> */}
+            <form className="pb-4">
                 {SECTIONS[step] && data[SECTIONS[step]] && (
-                    <fieldset className="p-3 bg-white shadow-sm rounded">
+                    <fieldset className="p-3 bg-white shadow-sm rounded border border-dark">
                         <legend className="fw-bold">
                             {TRANSLATIONS[SECTIONS[step]] || SECTIONS[step]}
                         </legend>
@@ -80,7 +109,7 @@ function EditCV() {
                         )}
                     </fieldset>
                 )}
-                <div className="w-100 d-flex justify-content-between mt-4">
+                <div className="navigation-buttons-c w-100 d-flex justify-content-between mt-4 ">
                     <button
                         type="button"
                         className="btn btn-outline-secondary"
@@ -103,11 +132,14 @@ function EditCV() {
                         {step === SECTIONS.length - 1 ? "Finalizar" : "Siguiente >"}
                     </button>
                 </div>
+
             </form>
         </div>
-  );
+    );
 }
 
+// Function to render each blank section of a CV from a RAW_JSON object
+// This function is used to render the sections of the CV in the EditCV component
 function renderSection(sectionData, section, handleChange, handleAddItem, handleRemoveItem) {
     if (!sectionData) return null;
 
@@ -118,7 +150,7 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
                     <div key={index} className="mb-2 p-2 border rounded">
                         {Object.keys(item).map((key) =>
                             typeof item[key] === "object" && key !== "profiles" ? (
-                                // Render nested objects (e.g., complex fields)
+                                // Handle sections that are objects (e.g., experience, volunteer, education)
                                 <div key={key} className="mb-3">
                                     <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                                     {Object.keys(item[key]).map((subKey) => (
@@ -144,52 +176,82 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
                                 />
                             )
                         )}
-                        <button type="button" className="btn btn-danger" onClick={() => handleRemoveItem(section, index)}>
-                            -
-                        </button>
+                        <div className="d-flex justify-content-center gap-3">
+                            <button
+                                type="button"
+                                className="btn btn-danger d-flex align-items-center justify-content-center"
+                                style={{ width: '40px', height: '40px' }}
+                                onClick={() => handleRemoveItem(section, index)}
+                            >
+                                -
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-success d-flex align-items-center justify-content-center"
+                                style={{ width: '40px', height: '40px' }}
+                                onClick={() => handleAddItem(section)}
+                            >
+                                +
+                            </button>
+                        </div>
+
                     </div>
                 ))}
-                <button type="button" className="btn btn-success mt-2" onClick={() => handleAddItem(section)}>
-                    +
-                </button>
+                {
+                    sectionData && sectionData.length === 0 && (
+                        <button type="button" className="btn btn-success mt-2" onClick={() => handleAddItem(section)}>
+                            +
+                        </button>
+                    )
+                }
+
             </div>
         );
     }
 
     return Object.keys(sectionData).map((key) =>
         Array.isArray(sectionData[key]) && key === "profiles" ? (
-            // Render profiles (special case for "profiles" array)
+            // special case for "profiles" array (nested object inside a section)
             <div key={key} className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                 {sectionData[key].map((profile, index) => (
                     <div key={index} className="mb-2 p-2 border rounded">
                         {Object.keys(profile).map((subKey) => (
                             <input
-                                key={subKey}
+                                key={`${index}-${subKey}`}
                                 type="text"
                                 className="form-control mb-2"
-                                value={profile[subKey] || ""}
+                                value={String(profile[subKey] ?? "")}
+
                                 onChange={(e) =>
-                                    handleChange(section, index, key, { ...profile, [subKey]: e.target.value })
+                                    handleChange(section, index, key, e.target.value, subKey)
                                 }
                                 placeholder={TRANSLATIONS[subKey] || subKey}
                             />
+
+
                         ))}
                         <button
                             type="button"
                             className="btn btn-danger"
-                            onClick={() => handleRemoveItem(key, index)}
+                            onClick={() => handleRemoveItem(section, index, key)} // <-- Aquí pasas el subkey
                         >
                             -
                         </button>
                     </div>
                 ))}
-                <button type="button" className="btn btn-success mt-2" onClick={() => handleAddItem(key)}>
+
+                <button
+                    type="button"
+                    className="btn btn-success mt-2 ms-2"
+                    onClick={() => handleAddItem(section, key)} // <-- "section" es "basics", "key" es "profiles"
+                >
                     +
                 </button>
+
             </div>
         ) : key === "location" && typeof sectionData[key] === "object" ? (
-            // Render location (special case for "location" object)
+            // special case for "location" object (nested object inside a section)
             <div key={key} className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                 {Object.keys(sectionData[key]).map((subKey) => (
@@ -206,7 +268,7 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
                 ))}
             </div>
         ) : (
-            // Render other normal fields
+            // Render basic KEY-VALUE pairs (not nested objects or arrays)
             <div key={key} className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                 <input
@@ -219,7 +281,7 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
             </div>
         )
     );
-    
+
 }
 
 export default EditCV;
