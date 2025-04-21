@@ -1,0 +1,147 @@
+:root {
+  --primary-color: #6302ea;
+  --secondary-color: #f5f5f5;
+  --sections-length: 0;
+  --step-progress: 0%;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  margin-top: 80px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button-style {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 220px;
+  background-color: #ffffff;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s ease,
+    background-color 0.3s ease;
+}
+
+.button-style i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.button-style span {
+  margin-top: -5px;
+}
+
+.button-style:hover {
+  background-color: #dcdcdc;
+  transform: scale(1.05);
+}
+
+.button-style:hover {
+  background-color: #d8d8d8;
+  transform: scale(1.05);
+}
+
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.button-style i {
+  font-size: 70px;
+  margin-bottom: 10px;
+  color: #29d967;
+}
+
+.button-style span {
+  margin-top: -5px;
+  color: #000000;
+}
+
+@media (min-width: 768px) {
+  .buttons-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.dashboard-container {
+  margin-top: 80px;
+  padding: 20px;
+  text-align: center;
+}
+
+.guide-container {
+  margin-top: 80px;
+  padding: 20px;
+  text-align: center;
+}
+
+.header-container {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: var(--primary-color);
+}
+
+.mobile-header {
+  width: 100%;
+  background-color: var(--secondary-color);
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding: 10px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+}
+
+.magneto-logo-mobile {
+  height: 50px;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    top: unset;
+    bottom: 0;
+  }
+
+  body {
+    padding-bottom: 60px;
+  }
+}
