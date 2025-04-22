@@ -48,18 +48,25 @@ export const uploadCV = async (file, userData) => {
     
     try {
         console.log('Enviando datos a la API:', url);
-        console.log('Archivo:', fileToUpload.name);
+        console.log('Archivo:', {
+            name: fileToUpload.name,
+            type: fileToUpload.type,
+            size: `${(fileToUpload.size / 1024).toFixed(2)} KB`
+        });
         
         // Realizar la petición a la API
         const response = await fetch(url, {
             method: 'POST',
-            body: formData
+            body: formData,
+            // Agregar timeout para evitar que la petición quede colgada
+            signal: AbortSignal.timeout(60000) // 60 segundos de timeout
         });
         
         // Mostrar información detallada de la respuesta
         console.log('Respuesta del servidor:', {
             status: response.status,
-            statusText: response.statusText
+            statusText: response.statusText,
+            headers: Object.fromEntries([...response.headers])
         });
         
         // Obtener el cuerpo de la respuesta (como texto primero)
@@ -70,15 +77,35 @@ export const uploadCV = async (file, userData) => {
         if (!response.ok) {
             let errorDetail = "Error desconocido";
             
-            // Intentar parsear el texto como JSON
-            try {
-                const errorJson = JSON.parse(responseText);
-                errorDetail = errorJson.error || errorJson.detail || `Error ${response.status}: ${response.statusText}`;
-            } catch (e) {
-                errorDetail = responseText || `Error ${response.status}: ${response.statusText}`;
+            if (response.status === 500) {
+                errorDetail = "Error interno del servidor. Posibles causas:\n" +
+                    "- El archivo podría ser demasiado grande o tener un formato no compatible\n" +
+                    "- El servidor podría estar experimentando problemas\n\n" +
+                    "Detalles técnicos: " + responseText;
+            } else {
+                // Intentar parsear el texto como JSON
+                try {
+                    const errorJson = JSON.parse(responseText);
+                    errorDetail = errorJson.error || errorJson.detail || `Error ${response.status}: ${response.statusText}`;
+                } catch (e) {
+                    errorDetail = responseText || `Error ${response.status}: ${response.statusText}`;
+                }
             }
             
             throw new Error(errorDetail);
+        }
+        
+        // Si la respuesta está vacía, devolver un mensaje informativo
+        if (!responseText || responseText.trim() === "") {
+            console.warn("La respuesta del servidor está vacía");
+            return { 
+                message: "El archivo fue procesado, pero el servidor no devolvió datos",
+                basics: {
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone
+                }
+            };
         }
         
         // Convertir la respuesta a JSON
@@ -86,14 +113,22 @@ export const uploadCV = async (file, userData) => {
         try {
             responseData = JSON.parse(responseText);
         } catch (e) {
-            console.error('Error al parsear la respuesta como JSON:', e);
-            throw new Error('La respuesta del servidor no es un JSON válido');
+            console.error('Error al parsear la respuesta como JSON:', e, 'Texto recibido:', responseText);
+            throw new Error('La respuesta del servidor no es un JSON válido: ' + responseText.substring(0, 100));
         }
         
         console.log('Datos procesados recibidos:', responseData);
         return responseData;
     } catch (error) {
         console.error('Error al enviar el archivo a la API:', error);
-        throw error;
+        
+        // Mejorar el manejo de errores para ser más específicos
+        if (error.name === 'AbortError') {
+            throw new Error('La solicitud ha excedido el tiempo máximo de espera (60 segundos)');
+        } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            throw new Error('No se pudo conectar con el servidor. Verifique que el backend esté en ejecución.');
+        } else {
+            throw error;
+        }
     }
 };
