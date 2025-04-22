@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 import RAW_JSON from "@data/mock/RawJson";
 import TRANSLATIONS from "@data/CV/Translations";
 import CV_PLACEHOLDERS from "@data/CV/Placeholders";
@@ -7,155 +7,154 @@ import FilePreview from "@pages/FilePreview";
 
 const SECTIONS = Object.keys(RAW_JSON);
 
-function EditCV() {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const resumeData = location.state?.resumeData;
-    const fromPreview = location.state?.fromPreview; 
-    const [data, setData] = useState(resumeData || null);
-    const [step, setStep] = useState(0);
-
-    // Timeout for testing purposes
-    useEffect(() => {
-        // 🛑 REPLACE THIS LINES WITH THE ACTUAL API CALL
-        if(!fromPreview){
-            const timeout = setTimeout(() => {
-                setData(JSON.parse(JSON.stringify(RAW_JSON)));
-            }, 100);
-            return () => clearTimeout(timeout);
+//Allow empty input creation for each section with a '+' button
+function createEmptyTemplate(template) {
+    if (!template || typeof template !== 'object') return {};
+    const emptyTemplate = {};
+    Object.keys(template).forEach(key => {
+        if (Array.isArray(template[key])) {
+            emptyTemplate[key] = [""];
+        } else if (typeof template[key] === 'object' && template[key] !== null) {
+            emptyTemplate[key] = createEmptyTemplate(template[key]);
+        } else {
+            emptyTemplate[key] = "";
         }
+    });
+    return emptyTemplate;
+}
 
-    }, [fromPreview]);
+const initialState = {
+    data: null,
+    step: 0
+};
 
-
-    const handleChange = (section, index, key, value, subKey = null) => {
-        setData((prevData) => {
-            const newData = JSON.parse(JSON.stringify(prevData));
-
+function cvReducer(state, action) {
+    switch (action.type) {
+        case "SET_DATA":
+            return { ...state, data: action.payload };
+        case "SET_STEP":
+            return { ...state, step: action.payload };
+        case "UPDATE_FIELD": {
+            const { section, index, key, value, subKey } = action.payload;
+            const newData = JSON.parse(JSON.stringify(state.data));
             if (subKey) {
-                // Special case: sub-section like profiles inside basics
                 newData[section][key][index][subKey] = value;
             } else if (Array.isArray(newData[section])) {
                 newData[section][index][key] = value;
             } else {
                 newData[section][key] = value;
             }
-
-            return newData;
-        });
-    };
-
-    // Adds a new empty input to the corresponding section of the CV
-    const createEmptyTemplate = (template) => {
-        if (!template || typeof template !== 'object') return {};
-        
-        const emptyTemplate = {};
-        Object.keys(template).forEach(key => {
-            if (Array.isArray(template[key])) {
-                emptyTemplate[key] = [""];  // Array with an empty string
-            } else if (typeof template[key] === 'object' && template[key] !== null) {
-                emptyTemplate[key] = createEmptyTemplate(template[key]);  // Recursion for nested objects
-            } else {
-                emptyTemplate[key] = "";  //Empty string for simple fields
-            }
-        });
-        
-        return emptyTemplate;
-    };
-    
-    
-    const handleAddItem = (section, subkey = null) => {
-        setData((prevData) => {
-            const newData = JSON.parse(JSON.stringify(prevData));
-    
+            return { ...state, data: newData };
+        }
+        case "ADD_ITEM": {
+            const { section, subkey } = action.payload;
+            const newData = JSON.parse(JSON.stringify(state.data));
+            const template = subkey
+                ? RAW_JSON[section][subkey]?.[0] || {}
+                : RAW_JSON[section]?.[0] || {};
+            const emptyTemplate = createEmptyTemplate(template);
             if (subkey) {
                 if (!Array.isArray(newData[section][subkey])) newData[section][subkey] = [];
-                
-                const template = Array.isArray(RAW_JSON[section][subkey])
-                    ? RAW_JSON[section][subkey][0] || {}
-                    : {};
-                    
-                const emptyTemplate = createEmptyTemplate(template);
                 newData[section][subkey].push(emptyTemplate);
             } else {
                 if (!Array.isArray(newData[section])) newData[section] = [];
-                
-                const template = Array.isArray(RAW_JSON[section])
-                    ? RAW_JSON[section][0] || {}
-                    : {};
-                    
-                const emptyTemplate = createEmptyTemplate(template);
                 newData[section].push(emptyTemplate);
             }
-    
-            return newData;
-        });
-    };
-
-
-    const handleRemoveItem = (section, index, subkey = null) => {
-        setData((prevData) => {
-            const newData = JSON.parse(JSON.stringify(prevData));
+            return { ...state, data: newData };
+        }
+        case "REMOVE_ITEM": {
+            const { section, index, subkey } = action.payload;
+            const newData = JSON.parse(JSON.stringify(state.data));
             if (subkey && Array.isArray(newData[section][subkey])) {
                 newData[section][subkey].splice(index, 1);
             } else if (Array.isArray(newData[section])) {
                 newData[section].splice(index, 1);
             }
-            return newData;
-        });
+            return { ...state, data: newData };
+        }
+        default:
+            return state;
+    }
+}
+
+function EditCV() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const resumeData = location.state?.resumeData;
+    const fromPreview = location.state?.fromPreview;
+
+    const [state, dispatch] = useReducer(cvReducer, {
+        ...initialState,
+        data: resumeData || null
+    });
+
+    useEffect(() => {
+        if (!fromPreview) {
+            const timeout = setTimeout(() => {
+                dispatch({ type: "SET_DATA", payload: JSON.parse(JSON.stringify(RAW_JSON)) });
+            }, 100);
+            return () => clearTimeout(timeout);
+        }
+    }, [fromPreview]);
+
+    const handleChange = (section, index, key, value, subKey = null) => {
+        dispatch({ type: "UPDATE_FIELD", payload: { section, index, key, value, subKey } });
     };
 
+    const handleAddItem = (section, subkey = null) => {
+        dispatch({ type: "ADD_ITEM", payload: { section, subkey } });
+    };
+
+    const handleRemoveItem = (section, index, subkey = null) => {
+        dispatch({ type: "REMOVE_ITEM", payload: { section, index, subkey } });
+    };
 
     const handleSubmit = () => {
-        console.log("Submitted Data:", JSON.stringify(data, null, 2));
-        navigate('/file-preview', { state: { resumeData: data } });
+        console.log("Submitted Data:", JSON.stringify(state.data, null, 2));
+        navigate('/file-preview', { state: { resumeData: state.data } });
     };
 
-
-    if (!data) return <div>Loading...</div>;
+    if (!state.data) return <div>Loading...</div>;
 
     return (
         <div className="container-fluid w-100 vh-100 p-4 bg-light">
             <h1 className="text-center mb-4 mt-4">Editar CV</h1>
             <div className="mt-4">
                 <label htmlFor="formstep" className="form-label bg-info rounded text-white p-2">
-                    <b>
-                        {TRANSLATIONS[SECTIONS[step]]}
-                    </b>
+                    <b>{TRANSLATIONS[SECTIONS[state.step]]}</b>
                 </label>
                 <input
                     name="formstep"
                     type="range"
                     min="0"
                     max={SECTIONS.length - 1}
-                    value={step}
-                    onChange={(e) => setStep(parseInt(e.target.value))}
+                    value={state.step}
+                    onChange={(e) => dispatch({ type: "SET_STEP", payload: parseInt(e.target.value) })}
                     className="form-range"
                 />
             </div>
 
-            {/* <!-- Navigation form  --> */}
             <form className="pb-4">
-                {SECTIONS[step] && data[SECTIONS[step]] && (
+                {SECTIONS[state.step] && state.data[SECTIONS[state.step]] && (
                     <fieldset className="p-3 bg-white shadow-sm rounded border border-dark">
                         <legend className="fw-bold">
-                            {TRANSLATIONS[SECTIONS[step]] || SECTIONS[step]}
+                            {TRANSLATIONS[SECTIONS[state.step]] || SECTIONS[state.step]}
                         </legend>
                         {renderSection(
-                            data[SECTIONS[step]],
-                            SECTIONS[step],
+                            state.data[SECTIONS[state.step]],
+                            SECTIONS[state.step],
                             handleChange,
                             handleAddItem,
                             handleRemoveItem
                         )}
                     </fieldset>
                 )}
-                <div className="navigation-buttons-c w-100 d-flex justify-content-between mt-4 ">
+                <div className="navigation-buttons-c w-100 d-flex justify-content-between mt-4">
                     <button
                         type="button"
                         className="btn btn-outline-secondary"
-                        disabled={step === 0}
-                        onClick={() => setStep((prev) => prev - 1)}
+                        disabled={state.step === 0}
+                        onClick={() => dispatch({ type: "SET_STEP", payload: state.step - 1 })}
                     >
                         &lt; Anterior
                     </button>
@@ -163,21 +162,21 @@ function EditCV() {
                         type="button"
                         className="btn btn-primary"
                         onClick={() => {
-                            if (step < SECTIONS.length - 1) {
-                                setStep((prev) => prev + 1);
+                            if (state.step < SECTIONS.length - 1) {
+                                dispatch({ type: "SET_STEP", payload: state.step + 1 });
                             } else {
                                 handleSubmit();
                             }
                         }}
                     >
-                        {step === SECTIONS.length - 1 ? "Finalizar" : "Siguiente >"}
+                        {state.step === SECTIONS.length - 1 ? "Finalizar" : "Siguiente >"}
                     </button>
                 </div>
-
             </form>
         </div>
     );
 }
+
 
 // Function to render each blank section of a CV from a RAW_JSON object
 // This function is used to render the sections of the CV in the EditCV component
