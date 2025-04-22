@@ -10,69 +10,90 @@ export const uploadCV = async (file, userData) => {
     // URL de la API
     const API_URL = 'http://localhost:8000/CV_Extraction/';
     
-    // Crear un FormData para enviar el archivo
-    const formData = new FormData();
+    // Validar datos
+    if (!userData.name || !userData.email || !userData.phone) {
+        throw new Error("Todos los campos son obligatorios");
+    }
     
-    // Agregar los datos del usuario al FormData
-    formData.append('name', userData.name || '');
-    formData.append('email', userData.email || '');
-    formData.append('phone', userData.phone || '');
-  
+    // Preparar el archivo
+    let fileToUpload = null;
+    
     // Si el archivo es una cadena (base64 de la imagen capturada)
     if (typeof file === 'string') {
-      try {
-        // Convertir la cadena base64 a un Blob
-        const base64Response = await fetch(file);
-        const blob = await base64Response.blob();
-        
-        // Crear un archivo a partir del blob
-        const fileFromBlob = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
-        formData.append('file', fileFromBlob);
-      } catch (error) {
-        console.error('Error al convertir imagen base64:', error);
-        throw new Error('Error al procesar la imagen capturada');
-      }
-    } else {
-      // Si es un archivo normal, agregarlo directamente
-      formData.append('file', file);
-    }
-  
-    try {
-      console.log('Enviando datos a la API:', API_URL);
-      
-      // Realizar la petición a la API
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: formData,
-        // No incluimos el modo 'no-cors' porque hemos configurado CORS en el backend
-      });
-  
-      // Mostrar información detallada de la respuesta
-      console.log('Respuesta del servidor:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries([...response.headers])
-      });
-  
-      if (!response.ok) {
-        // Intentar obtener el mensaje de error del cuerpo de la respuesta
-        let errorMessage;
         try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorData.detail || `Error ${response.status}: ${response.statusText}`;
-        } catch (e) {
-          errorMessage = `Error ${response.status}: ${response.statusText}`;
+            const base64Response = await fetch(file);
+            const blob = await base64Response.blob();
+            fileToUpload = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
+        } catch (error) {
+            console.error('Error al convertir imagen base64:', error);
+            throw new Error('Error al procesar la imagen capturada');
+        }
+    } else {
+        fileToUpload = file;
+    }
+    
+    // Crear parámetros de consulta
+    const queryParams = new URLSearchParams({
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone
+    });
+    
+    // URL completa con parámetros
+    const url = `${API_URL}?${queryParams}`;
+    
+    // Crear FormData solo con el archivo
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+    
+    try {
+        console.log('Enviando datos a la API:', url);
+        console.log('Archivo:', fileToUpload.name);
+        
+        // Realizar la petición a la API
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Mostrar información detallada de la respuesta
+        console.log('Respuesta del servidor:', {
+            status: response.status,
+            statusText: response.statusText
+        });
+        
+        // Obtener el cuerpo de la respuesta (como texto primero)
+        const responseText = await response.text();
+        console.log('Respuesta del servidor (texto):', responseText);
+        
+        // Si la respuesta no es exitosa
+        if (!response.ok) {
+            let errorDetail = "Error desconocido";
+            
+            // Intentar parsear el texto como JSON
+            try {
+                const errorJson = JSON.parse(responseText);
+                errorDetail = errorJson.error || errorJson.detail || `Error ${response.status}: ${response.statusText}`;
+            } catch (e) {
+                errorDetail = responseText || `Error ${response.status}: ${response.statusText}`;
+            }
+            
+            throw new Error(errorDetail);
         }
         
-        throw new Error(errorMessage);
-      }
-  
-      // Devolver los datos procesados
-      const responseData = await response.json();
-      console.log('Datos procesados recibidos:', responseData);
-      return responseData;
+        // Convertir la respuesta a JSON
+        let responseData;
+        try {
+            responseData = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Error al parsear la respuesta como JSON:', e);
+            throw new Error('La respuesta del servidor no es un JSON válido');
+        }
+        
+        console.log('Datos procesados recibidos:', responseData);
+        return responseData;
     } catch (error) {
-      console.error('Error al enviar el archivo a la API:', error);
-      throw error;
+        console.error('Error al enviar el archivo a la API:', error);
+        throw error;
     }
-};  
+};

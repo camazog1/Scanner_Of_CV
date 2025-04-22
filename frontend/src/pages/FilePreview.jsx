@@ -1,3 +1,4 @@
+// frontend/src/pages/FilePreview.jsx
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserForm from "../components/UserForm";
@@ -29,10 +30,21 @@ function FilePreview() {
     navigate("/");
   };
 
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  };
+
   const handleConfirm = async () => {
     // Validar que se hayan ingresado los datos requeridos
     if (!userData.name || !userData.email || !userData.phone) {
       setError("Por favor, completa todos los campos requeridos.");
+      return;
+    }
+
+    // Validar formato de correo electrónico
+    if (!validateEmail(userData.email)) {
+      setError("Por favor, ingresa un correo electrónico válido.");
       return;
     }
 
