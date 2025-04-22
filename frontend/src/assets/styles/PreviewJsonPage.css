@@ -1,0 +1,64 @@
+.json-preview {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 15px;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  max-height: 600px;
+  overflow: auto;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.json-preview pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.cv-preview-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.cv-preview-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cv-header {
+  background-color: #6302ea;
+  color: white;
+  padding: 15px;
+  border-radius: 4px 4px 0 0;
+}
+
+.cv-section {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.cv-section:last-child {
+  border-bottom: none;
+}
+
+.action-buttons {
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+}
+
+.skill-badge {
+  background-color: #e9ecef;
+  border-radius: 20px;
+  padding: 5px 15px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    position: static;
+    margin-bottom: 20px;
+  }
+}

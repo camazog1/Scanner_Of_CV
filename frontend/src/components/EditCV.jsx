@@ -80,7 +80,7 @@ function cvReducer(state, action) {
 function EditCV() {
     const navigate = useNavigate();
     const location = useLocation();
-    const resumeData = location.state?.resumeData;
+    const resumeData = location.state?.processedData;
     const fromPreview = location.state?.fromPreview;
 
     const [state, dispatch] = useReducer(cvReducer, {
