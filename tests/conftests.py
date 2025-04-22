@@ -2,11 +2,14 @@
 import pytest
 import os
 import sys
-import json
 from pathlib import Path
 
-# Añadir el directorio raíz al path para importar módulos de la app
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Obtener la ruta absoluta del directorio raíz del proyecto
+PROJECT_ROOT = Path(__file__).parent.parent.absolute()
+print(f"Adding to PYTHONPATH: {PROJECT_ROOT}")
+
+# Añadir el directorio raíz al path para que 'app' sea importable
+sys.path.insert(0, str(PROJECT_ROOT))   
 
 # Fixture para crear un directorio temporal para las pruebas
 @pytest.fixture
