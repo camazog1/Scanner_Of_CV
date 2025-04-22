@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from routes import main_process
+from app.routes import main_process
 
 app = FastAPI()
 
