@@ -1,52 +1,69 @@
+/* frontend/src/assets/styles/FilePreview.css */
+
 .file-preview {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: calc(
-    100vh - 60px
-  ); /* Ajusta la altura restando la altura del navbar */
-  width: 100vw;
+  justify-content: flex-start;
+  width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  margin-top: 60px; /* Ajusta el margen superior para compensar la altura del navbar */
+  margin-top: 20px;
+  position: relative;
 }
 
 .file-container {
-  flex: 1;
+  width: 100%;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.file-container img,
-.file-container embed {
+.preview-image,
+.preview-pdf {
   max-width: 100%;
   max-height: 100%;
-  width: 100%;
-  height: 100%;
   object-fit: contain;
 }
 
 .button-container {
   display: flex;
-  gap: 10px;
+  justify-content: flex-end;
   margin-top: 20px;
+  width: 100%;
 }
 
-.rounded-button {
-  background-color: #007bff; /* Color de fondo */
-  color: white; /* Color del texto */
-  border: none;
-  border-radius: 12px; /* Bordes redondeados */
-  padding: 10px 20px; /* Espaciado interno */
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.rounded-button:hover {
-  background-color: #0056b3; /* Color de fondo al pasar el ratón */
+.user-form {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .file-preview {
+    padding: 10px;
+  }
+
+  .file-container {
+    height: 250px;
+  }
 }
