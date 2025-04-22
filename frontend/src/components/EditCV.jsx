@@ -5,9 +5,10 @@ import CV_PLACEHOLDERS from "@data/CV/Placeholders";
 
 const SECTIONS = Object.keys(RAW_JSON);
 
-function EditCV({ initialData = null }) {
+function EditCV({ initialData = null, onEditComplete = null }) {
   const [data, setData] = useState({});
   const [step, setStep] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     // Si hay datos iniciales, los usamos; de lo contrario, usamos RAW_JSON
@@ -35,6 +36,11 @@ function EditCV({ initialData = null }) {
 
       return newData;
     });
+
+    // Reset completion state when data changes
+    if (isComplete) {
+      setIsComplete(false);
+    }
   };
 
   const handleAddItem = (section, subkey = null) => {
@@ -58,6 +64,11 @@ function EditCV({ initialData = null }) {
 
       return newData;
     });
+
+    // Reset completion state when data changes
+    if (isComplete) {
+      setIsComplete(false);
+    }
   };
 
   const handleRemoveItem = (section, index, subkey = null) => {
@@ -70,32 +81,26 @@ function EditCV({ initialData = null }) {
       }
       return newData;
     });
+
+    // Reset completion state when data changes
+    if (isComplete) {
+      setIsComplete(false);
+    }
   };
 
   const handleSubmit = async () => {
     console.log("Enviando datos al servidor:", JSON.stringify(data, null, 2));
 
     try {
-      // Aquí podrías agregar una llamada a la API para guardar los datos finales
-      // Por ejemplo:
-      /*
-            const response = await fetch('http://localhost:8000/save_cv/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log("Datos guardados exitosamente:", result);
-            */
+      // Marcar como completado
+      setIsComplete(true);
 
-      // Por ahora, solo mostraremos un mensaje en consola
+      // Si hay una función onEditComplete, la llamamos con los datos finales
+      if (onEditComplete) {
+        onEditComplete(data);
+      }
+
+      // Mostrar mensaje de éxito
       alert("CV guardado exitosamente");
     } catch (error) {
       console.error("Error al guardar el CV:", error);
@@ -116,7 +121,7 @@ function EditCV({ initialData = null }) {
     );
 
   return (
-    <div className="container-fluid w-100 vh-100 p-4 bg-light">
+    <div className="container-fluid w-100 p-4 bg-light">
       <h1 className="text-center mb-4 mt-4">Editar CV</h1>
       <div className="mt-4">
         <label
@@ -172,10 +177,20 @@ function EditCV({ initialData = null }) {
               }
             }}
           >
-            {step === SECTIONS.length - 1 ? "Guardar CV" : "Siguiente >"}
+            {step === SECTIONS.length - 1 ? "Finalizar Edición" : "Siguiente >"}
           </button>
         </div>
       </form>
+
+      {isComplete && onEditComplete && (
+        <div className="alert alert-success mt-4">
+          <h4 className="alert-heading">¡Edición completada!</h4>
+          <p>
+            Has completado la edición del CV. Ahora puedes previsualizar y
+            exportar el resultado.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
