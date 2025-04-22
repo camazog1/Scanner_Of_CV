@@ -31,7 +31,10 @@ function FileUpload() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "300px" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -46,29 +49,32 @@ function FileUpload() {
           {!editComplete ? (
             <div className="alert alert-success mb-4" role="alert">
               <h4 className="alert-heading">¡Procesamiento exitoso!</h4>
-              <p>El CV ha sido procesado correctamente. Puedes editar la información a continuación.</p>
+              <p>
+                El CV ha sido procesado correctamente. Puedes editar la
+                información a continuación.
+              </p>
             </div>
           ) : (
             <div className="alert alert-info mb-4" role="alert">
               <h4 className="alert-heading">Edición completada</h4>
-              <p>Has completado la edición del CV. Ahora puedes previsualizar el resultado.</p>
+              <p>
+                Has completado la edición del CV. Ahora puedes previsualizar el
+                resultado.
+              </p>
               <div className="d-flex justify-content-end">
-                <button
-                  className="btn btn-primary"
-                  onClick={navigateToPreview}
-                >
+                <button className="btn btn-primary" onClick={navigateToPreview}>
                   <i className="bi bi-eye-fill me-2"></i>
                   Previsualizar CV
                 </button>
               </div>
             </div>
           )}
-          
-          <EditCV 
-            initialData={processedData} 
+
+          <EditCV
+            initialData={processedData}
             onEditComplete={handleEditComplete}
           />
-          
+
           {editComplete && (
             <div className="text-center my-4">
               <button
