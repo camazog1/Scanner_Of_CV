@@ -41,7 +41,7 @@ function FileUpload() {
 
   return (
     <div className="w-100">
-      {processedData && (
+      {processedData ? (
         <div className="container">
           {!editComplete ? (
             <div className="alert alert-success mb-4" role="alert">
