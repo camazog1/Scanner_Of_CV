@@ -24,7 +24,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.preview-image, 
+.preview-image,
 .preview-pdf {
   max-width: 100%;
   max-height: 100%;
@@ -62,7 +62,7 @@
   .file-preview {
     padding: 10px;
   }
-  
+
   .file-container {
     height: 250px;
   }

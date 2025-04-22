@@ -18,7 +18,10 @@ function FileUpload() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "300px" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -32,9 +35,12 @@ function FileUpload() {
         <div className="container">
           <div className="alert alert-success mb-4" role="alert">
             <h4 className="alert-heading">¡Procesamiento exitoso!</h4>
-            <p>El CV ha sido procesado correctamente. Puedes editar la información a continuación.</p>
+            <p>
+              El CV ha sido procesado correctamente. Puedes editar la
+              información a continuación.
+            </p>
           </div>
-          
+
           <EditCV initialData={processedData} />
         </div>
       ) : (
