@@ -1,8 +1,8 @@
 // frontend/src/pages/FilePreview.jsx
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import UserForm from "../components/UserForm";
-import { uploadCV } from "../services/api";
+import UserForm from "@components/UserForm";
+import { uploadCV } from "@services/api";
 import "@styles/FilePreview.css";
 
 function FilePreview() {
