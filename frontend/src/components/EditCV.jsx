@@ -5,13 +5,20 @@ import CV_PLACEHOLDERS from "@data/CV/Placeholders";
 
 const SECTIONS = Object.keys(RAW_JSON);
 
-function EditCV() {
+function EditCV({ initialData = null }) {
     const [data, setData] = useState({});
     const [step, setStep] = useState(0);
 
     useEffect(() => {
-        setData(JSON.parse(JSON.stringify(RAW_JSON)));
-    }, []);
+        // Si hay datos iniciales, los usamos; de lo contrario, usamos RAW_JSON
+        if (initialData) {
+            console.log("Usando datos iniciales:", initialData);
+            setData(initialData);
+        } else {
+            console.log("Usando datos de plantilla predeterminada");
+            setData(JSON.parse(JSON.stringify(RAW_JSON)));
+        }
+    }, [initialData]);
 
     const handleChange = (section, index, key, value, subKey = null) => {
         setData((prevData) => {
@@ -66,12 +73,45 @@ function EditCV() {
     };
 
 
-    const handleSubmit = () => {
-        console.log("Submitted Data:", JSON.stringify(data, null, 2));
+    const handleSubmit = async () => {
+        console.log("Enviando datos al servidor:", JSON.stringify(data, null, 2));
+        
+        try {
+            // Aquí podrías agregar una llamada a la API para guardar los datos finales
+            // Por ejemplo:
+            /*
+            const response = await fetch('http://localhost:8000/save_cv/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log("Datos guardados exitosamente:", result);
+            */
+            
+            // Por ahora, solo mostraremos un mensaje en consola
+            alert("CV guardado exitosamente");
+        } catch (error) {
+            console.error("Error al guardar el CV:", error);
+            alert("Error al guardar el CV: " + error.message);
+        }
     };
 
 
-    if (!data) return <div>Loading...</div>;
+    if (!data || Object.keys(data).length === 0) return (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    );
 
     return (
         <div className="container-fluid w-100 vh-100 p-4 bg-light">
@@ -129,7 +169,7 @@ function EditCV() {
                             }
                         }}
                     >
-                        {step === SECTIONS.length - 1 ? "Finalizar" : "Siguiente >"}
+                        {step === SECTIONS.length - 1 ? "Guardar CV" : "Siguiente >"}
                     </button>
                 </div>
 
@@ -281,7 +321,6 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
             </div>
         )
     );
-
 }
 
 export default EditCV;
