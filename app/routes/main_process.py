@@ -2,6 +2,8 @@ import os
 import shutil
 import json
 import re
+import time
+import uuid
 from pathlib import Path
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
@@ -9,8 +11,18 @@ from google.cloud import vision
 from openai import OpenAI
 from dotenv import load_dotenv
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/carlosm/Documentos/Projects/Scanner_of_CV/google_credentials.json"
+# Cargar variables de entorno de .env
 load_dotenv()
+
+# Obtener la ruta de las credenciales de la variable de entorno o usar una ruta relativa
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+credentials_path = os.getenv("GOOGLE_CREDENTIALS_PATH", str(BASE_DIR / "google_credentials.json"))
+
+if not os.path.exists(credentials_path):
+    raise FileNotFoundError(f"Google credentials file not found at: {credentials_path}")
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+
 router = APIRouter()
 
 UPLOAD_DIR = Path("uploads") 
@@ -29,10 +41,14 @@ async def upload_file(name: str, email: str, phone: str, file: UploadFile = File
         if not is_valid_email(email):
             return JSONResponse(status_code=400, content={"error": "Invalid email format."})
         
+        # Generar un nombre único para el archivo
+        unique_id = str(uuid.uuid4())[:8]
+        timestamp = int(time.time())
         file_extension = Path(file.filename).suffix
-        file_extension = ".png" if file_extension != ".pdf" else ".pdf"
-        file.filename = f"file{file_extension}"
-        file_path = UPLOAD_DIR / file.filename
+        file_extension = ".png" if file_extension not in [".pdf", ".png", ".jpg", ".jpeg"] else file_extension
+        
+        unique_filename = f"file_{timestamp}_{unique_id}{file_extension}"
+        file_path = UPLOAD_DIR / unique_filename
 
         with file_path.open("wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
@@ -50,13 +66,13 @@ def is_valid_email(email: str) -> bool:
 
 def extract_text(path: str, name: str, email: str, phone: str):
     try:
-        file_extension = Path(path).suffix
-        if file_extension == ".png":
-            response = extract_text_image(name, email, phone)
-        elif file_extension == ".pdf":
-            response = extract_text_pdf(name, email, phone)
+        file_extension = path.suffix
+        if file_extension.lower() in [".png", ".jpg", ".jpeg"]:
+            response = extract_text_image(path, name, email, phone)
+        elif file_extension.lower() == ".pdf":
+            response = extract_text_pdf(path, name, email, phone)
         else:
-            raise ValueError("Unsupported file extension.")
+            raise ValueError(f"Unsupported file extension: {file_extension}")
 
         response = response.replace("```json", "").replace("```", "").strip()
         data = json.loads(response)
@@ -67,12 +83,11 @@ def extract_text(path: str, name: str, email: str, phone: str):
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Text extraction error: {str(e)}"})
 
-def extract_text_image(name, email, phone):
+def extract_text_image(path: str, name: str, email: str, phone: str):
     try:
         client_vision = vision.ImageAnnotatorClient()
-        path_image = "uploads/file.png"
 
-        with open(path_image, 'rb') as image_file:
+        with open(path, 'rb') as image_file:
             file = image_file.read()
 
         image = vision.Image(content=file)
@@ -85,12 +100,11 @@ def extract_text_image(name, email, phone):
     except Exception as e:
         raise RuntimeError(f"Image text extraction failed: {str(e)}")
 
-def extract_text_pdf(name, email, phone):
+def extract_text_pdf(path: str, name: str, email: str, phone: str):
     try:
         client_vision = vision.ImageAnnotatorClient()
-        path_pdf = "uploads/file.pdf"
 
-        with open(path_pdf, 'rb') as pdf_file:
+        with open(path, 'rb') as pdf_file:
             content = pdf_file.read()
 
         request = vision.AnnotateFileRequest(
@@ -126,8 +140,9 @@ def organizeJSON(extracted_text: str, name: str, email: str, phone: str) -> str:
 
         client_deepseek = OpenAI(api_key=api_key, base_url=base_url)
 
-        schema_path = '/home/carlosm/Documentos/Projects/Scanner_of_CV/docs/schema.json'
-        schema_example_path = '/home/carlosm/Documentos/Projects/Scanner_of_CV/docs/schema_with_example.json'
+        # Obtener las rutas a los archivos de esquema utilizando rutas relativas
+        schema_path = BASE_DIR / "docs" / "schema.json"
+        schema_example_path = BASE_DIR / "docs" / "schema_with_example.json"
 
         with open(schema_path, 'r') as f:
             schema_content = json.dumps(json.load(f))
