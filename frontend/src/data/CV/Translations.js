@@ -43,7 +43,7 @@ const TRANSLATIONS = {
   keywords: "Palabras Clave",
   languages: "Idiomas",
   language: "Idioma",
-  fluency: "Fluidez",
+  fluency: "Nivel de Fluidez",
   interests: "Intereses",
   references: "Referencias",
   reference: "Referencia",

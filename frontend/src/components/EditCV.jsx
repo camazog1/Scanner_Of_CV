@@ -2,23 +2,38 @@ import React, { useState, useEffect } from "react";
 import RAW_JSON from "@data/mock/RawJson";
 import TRANSLATIONS from "@data/CV/Translations";
 import CV_PLACEHOLDERS from "@data/CV/Placeholders";
+import { useNavigate, useLocation } from "react-router-dom"; 
+import FilePreview from "@pages/FilePreview";
 
 const SECTIONS = Object.keys(RAW_JSON);
 
 function EditCV() {
-    const [data, setData] = useState({});
+    const navigate = useNavigate();
+    const location = useLocation();
+    const resumeData = location.state?.resumeData;
+    const fromPreview = location.state?.fromPreview; 
+    const [data, setData] = useState(resumeData || null);
     const [step, setStep] = useState(0);
 
+    // Timeout for testing purposes
     useEffect(() => {
-        setData(JSON.parse(JSON.stringify(RAW_JSON)));
-    }, []);
+        // 🛑 REPLACE THIS LINES WITH THE ACTUAL API CALL
+        if(!fromPreview){
+            const timeout = setTimeout(() => {
+                setData(JSON.parse(JSON.stringify(RAW_JSON)));
+            }, 100);
+            return () => clearTimeout(timeout);
+        }
+
+    }, [fromPreview]);
+
 
     const handleChange = (section, index, key, value, subKey = null) => {
         setData((prevData) => {
             const newData = JSON.parse(JSON.stringify(prevData));
 
             if (subKey) {
-                // Caso especial: subsección como profiles dentro de basics
+                // Special case: sub-section like profiles inside basics
                 newData[section][key][index][subKey] = value;
             } else if (Array.isArray(newData[section])) {
                 newData[section][index][key] = value;
@@ -30,24 +45,49 @@ function EditCV() {
         });
     };
 
+    // Adds a new empty input to the corresponding section of the CV
+    const createEmptyTemplate = (template) => {
+        if (!template || typeof template !== 'object') return {};
+        
+        const emptyTemplate = {};
+        Object.keys(template).forEach(key => {
+            if (Array.isArray(template[key])) {
+                emptyTemplate[key] = [""];  // Array with an empty string
+            } else if (typeof template[key] === 'object' && template[key] !== null) {
+                emptyTemplate[key] = createEmptyTemplate(template[key]);  // Recursion for nested objects
+            } else {
+                emptyTemplate[key] = "";  //Empty string for simple fields
+            }
+        });
+        
+        return emptyTemplate;
+    };
+    
+    
     const handleAddItem = (section, subkey = null) => {
         setData((prevData) => {
             const newData = JSON.parse(JSON.stringify(prevData));
-
+    
             if (subkey) {
                 if (!Array.isArray(newData[section][subkey])) newData[section][subkey] = [];
+                
                 const template = Array.isArray(RAW_JSON[section][subkey])
                     ? RAW_JSON[section][subkey][0] || {}
                     : {};
-                newData[section][subkey].push(JSON.parse(JSON.stringify(template)));
+                    
+                const emptyTemplate = createEmptyTemplate(template);
+                newData[section][subkey].push(emptyTemplate);
             } else {
                 if (!Array.isArray(newData[section])) newData[section] = [];
+                
                 const template = Array.isArray(RAW_JSON[section])
                     ? RAW_JSON[section][0] || {}
                     : {};
-                newData[section].push(JSON.parse(JSON.stringify(template)));
+                    
+                const emptyTemplate = createEmptyTemplate(template);
+                newData[section].push(emptyTemplate);
             }
-
+    
             return newData;
         });
     };
@@ -68,6 +108,7 @@ function EditCV() {
 
     const handleSubmit = () => {
         console.log("Submitted Data:", JSON.stringify(data, null, 2));
+        navigate('/file-preview', { state: { resumeData: data } });
     };
 
 
@@ -147,33 +188,37 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
         return (
             <div className="mb-3">
                 {sectionData.map((item, index) => (
-                    <div key={index} className="mb-2 p-2 border rounded">
+                    <div className="mb-2 p-2 border rounded">
                         {Object.keys(item).map((key) =>
                             typeof item[key] === "object" && key !== "profiles" ? (
                                 // Handle sections that are objects (e.g., experience, volunteer, education)
-                                <div key={key} className="mb-3">
+                                <div className="mb-3">
                                     <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                                     {Object.keys(item[key]).map((subKey) => (
                                         <input
-                                            key={subKey}
                                             type="text"
                                             className="form-control mb-2"
                                             value={item[key][subKey] || ""}
                                             onChange={(e) => handleChange(section, index, key, { ...item[key], [subKey]: e.target.value })}
-                                            placeholder={TRANSLATIONS[subKey] || subKey}
+                                            placeholder={CV_PLACEHOLDERS[key] || subKey}
                                         />
                                     ))}
                                 </div>
                             ) : (
                                 // Render simple fields
-                                <input
-                                    key={key}
-                                    type="text"
-                                    className="form-control mb-2"
-                                    value={item[key] || ""}
-                                    onChange={(e) => handleChange(section, index, key, e.target.value)}
-                                    placeholder={TRANSLATIONS[key] || key}
-                                />
+                                <div className="mb-2">
+                                    <label className="fw-bold">
+                                        {TRANSLATIONS[key] || key}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={item[key] || ""}
+                                        onChange={(e) => handleChange(section, index, key, e.target.value)}
+                                        placeholder={CV_PLACEHOLDERS[key] || key}
+                                    />
+                                </div>
+
                             )
                         )}
                         <div className="d-flex justify-content-center gap-3">
@@ -212,21 +257,19 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
     return Object.keys(sectionData).map((key) =>
         Array.isArray(sectionData[key]) && key === "profiles" ? (
             // special case for "profiles" array (nested object inside a section)
-            <div key={key} className="mb-3">
+            <div className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                 {sectionData[key].map((profile, index) => (
-                    <div key={index} className="mb-2 p-2 border rounded">
+                    <div className="mb-2 p-2 border rounded">
                         {Object.keys(profile).map((subKey) => (
                             <input
-                                key={`${index}-${subKey}`}
                                 type="text"
                                 className="form-control mb-2"
-                                value={String(profile[subKey] ?? "")}
-
+                                value={profile[subKey] || ""}
                                 onChange={(e) =>
                                     handleChange(section, index, key, e.target.value, subKey)
                                 }
-                                placeholder={TRANSLATIONS[subKey] || subKey}
+                                placeholder={CV_PLACEHOLDERS[subKey] || subKey}
                             />
 
 
@@ -252,31 +295,35 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
             </div>
         ) : key === "location" && typeof sectionData[key] === "object" ? (
             // special case for "location" object (nested object inside a section)
-            <div key={key} className="mb-3">
+            <div className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
+                <br />
                 {Object.keys(sectionData[key]).map((subKey) => (
+                    <>
+                    <label className="fw-bold">{TRANSLATIONS[subKey] || key}</label>
                     <input
-                        key={subKey}
                         type="text"
                         className="form-control mb-2"
                         value={sectionData[key][subKey] || ""}
                         onChange={(e) =>
                             handleChange(section, 0, key, { ...sectionData[key], [subKey]: e.target.value })
                         }
-                        placeholder={TRANSLATIONS[subKey] || subKey}
-                    />
+                        placeholder={CV_PLACEHOLDERS[subKey] || subKey}
+                        />
+                        
+                    </>
                 ))}
             </div>
         ) : (
             // Render basic KEY-VALUE pairs (not nested objects or arrays)
-            <div key={key} className="mb-3">
+            <div className="mb-3">
                 <label className="fw-bold">{TRANSLATIONS[key] || key}</label>
                 <input
                     type="text"
                     className="form-control"
                     value={sectionData[key] || ""}
                     onChange={(e) => handleChange(section, 0, key, e.target.value)}
-                    placeholder={TRANSLATIONS[key] || key}
+                    placeholder={CV_PLACEHOLDERS[key] || key}
                 />
             </div>
         )
