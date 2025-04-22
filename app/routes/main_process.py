@@ -73,7 +73,7 @@ def extract_text(path: str, name: str, email: str, phone: str):
             response = extract_text_pdf(path, name, email, phone)
         else:
             raise ValueError(f"Unsupported file extension: {file_extension}")
-
+        
         response = response.replace("```json", "").replace("```", "").strip()
         data = json.loads(response)
         return data
@@ -150,13 +150,22 @@ def organizeJSON(extracted_text: str, name: str, email: str, phone: str) -> str:
             schema_example_content = json.dumps(json.load(f))
 
         response = client_deepseek.chat.completions.create(
-            model="deepseek-chat",
-            messages=[
-                {"role": "user", "content": "Organize and correct the following extracted text into the provided schema format (schema.json) without adding additional information or explanations. Use the schema_with_example.json as a reference for how the schema should be filled. Include the provided name, email, and phone for better accuracy."},
-                {"role": "user", "content": f"Schema: {schema_content}"},
-                {"role": "user", "content": f"Schema Example: {schema_example_content}"},
-                {"role": "user", "content": f"Extracted Text: {extracted_text}"},
-                {"role": "user", "content": f"Name: {name}, Email: {email}, Phone: {phone}"}
+        model="deepseek-chat",
+        messages=[
+            {"role": "user", "content": "Organize and correct the following extracted text according to the provided "
+            "schema format (schema.json). Use schema_with_example.json as a reference for how the schema should be "
+            "completed. Fill in as many fields as possible using the extracted text and the provided name, email, and "
+            "phone number. If any spelling or grammar mistakes are found, try to correct them using the context of the "
+            "text and the provided information. Note that some resumes may contain additional or unstructured "
+            "information—if you find loose or disorganized data, try to assign it to the appropriate section in the "
+            "schema based on its context, without making up or modifying content. "
+            "Very important: if any field is missing from the extracted text, it must remain exactly as in the original "
+            "schema—do not remove or modify it. The output must be only the final complete JSON. Do not include any "
+            "comments, explanations, or extra text—just the JSON."},
+            {"role": "user", "content": f"Schema: {schema_content}"},
+            {"role": "user", "content": f"Schema Example: {schema_example_content}"},
+            {"role": "user", "content": f"Extracted Text: {extracted_text}"},
+            {"role": "user", "content": f"Name: {name}, Email: {email}, Phone: {phone}"}
             ],
             stream=False
         )
