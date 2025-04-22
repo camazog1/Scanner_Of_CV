@@ -39,6 +39,9 @@ function FilePreview() {
     try {
       setIsLoading(true);
       setError(null);
+      
+      console.log("Enviando archivo:", file);
+      console.log("Datos de usuario:", userData);
 
       // Enviar el archivo a la API
       const response = await uploadCV(file, userData);

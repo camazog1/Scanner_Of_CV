@@ -20,33 +20,59 @@ export const uploadCV = async (file, userData) => {
   
     // Si el archivo es una cadena (base64 de la imagen capturada)
     if (typeof file === 'string') {
-      // Convertir la cadena base64 a un Blob
-      const base64Response = await fetch(file);
-      const blob = await base64Response.blob();
-      
-      // Crear un archivo a partir del blob
-      const fileFromBlob = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
-      formData.append('file', fileFromBlob);
+      try {
+        // Convertir la cadena base64 a un Blob
+        const base64Response = await fetch(file);
+        const blob = await base64Response.blob();
+        
+        // Crear un archivo a partir del blob
+        const fileFromBlob = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
+        formData.append('file', fileFromBlob);
+      } catch (error) {
+        console.error('Error al convertir imagen base64:', error);
+        throw new Error('Error al procesar la imagen capturada');
+      }
     } else {
       // Si es un archivo normal, agregarlo directamente
       formData.append('file', file);
     }
   
     try {
+      console.log('Enviando datos a la API:', API_URL);
+      
       // Realizar la petición a la API
       const response = await fetch(API_URL, {
         method: 'POST',
         body: formData,
+        // No incluimos el modo 'no-cors' porque hemos configurado CORS en el backend
+      });
+  
+      // Mostrar información detallada de la respuesta
+      console.log('Respuesta del servidor:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries([...response.headers])
       });
   
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        // Intentar obtener el mensaje de error del cuerpo de la respuesta
+        let errorMessage;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.detail || `Error ${response.status}: ${response.statusText}`;
+        } catch (e) {
+          errorMessage = `Error ${response.status}: ${response.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
   
       // Devolver los datos procesados
-      return await response.json();
+      const responseData = await response.json();
+      console.log('Datos procesados recibidos:', responseData);
+      return responseData;
     } catch (error) {
       console.error('Error al enviar el archivo a la API:', error);
       throw error;
     }
-  };
+};  

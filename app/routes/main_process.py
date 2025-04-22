@@ -9,8 +9,18 @@ from google.cloud import vision
 from openai import OpenAI
 from dotenv import load_dotenv
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/carlosm/Documentos/Projects/Scanner_of_CV/google_credentials.json"
+# Cargar variables de entorno de .env
 load_dotenv()
+
+# Obtener la ruta de las credenciales de la variable de entorno o usar una ruta relativa
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+credentials_path = os.getenv("GOOGLE_CREDENTIALS_PATH", str(BASE_DIR / "google_credentials.json"))
+
+if not os.path.exists(credentials_path):
+    raise FileNotFoundError(f"Google credentials file not found at: {credentials_path}")
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+
 router = APIRouter()
 
 UPLOAD_DIR = Path("uploads") 
@@ -126,8 +136,9 @@ def organizeJSON(extracted_text: str, name: str, email: str, phone: str) -> str:
 
         client_deepseek = OpenAI(api_key=api_key, base_url=base_url)
 
-        schema_path = '/home/carlosm/Documentos/Projects/Scanner_of_CV/docs/schema.json'
-        schema_example_path = '/home/carlosm/Documentos/Projects/Scanner_of_CV/docs/schema_with_example.json'
+        # Obtener las rutas a los archivos de esquema utilizando rutas relativas
+        schema_path = BASE_DIR / "docs" / "schema.json"
+        schema_example_path = BASE_DIR / "docs" / "schema_with_example.json"
 
         with open(schema_path, 'r') as f:
             schema_content = json.dumps(json.load(f))
