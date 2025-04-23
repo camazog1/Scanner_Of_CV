@@ -49,12 +49,12 @@ function Header() {
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <Link to="/" className="nav-link text-white">
-                  Subir CV
+                  <b>Subir CV</b>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/guide" className="nav-link text-white">
-                  Guía
+                  <b>Guía</b>
                 </Link>
               </li>
 
