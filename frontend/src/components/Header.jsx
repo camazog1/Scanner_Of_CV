@@ -48,13 +48,8 @@ function Header() {
           <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/dashboard" className="nav-link text-white">
-                  Dashboard
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/file-upload" className="nav-link text-white">
-                  File upload
+                <Link to="/" className="nav-link text-white">
+                  Subir CV
                 </Link>
               </li>
               <li className="nav-item">
