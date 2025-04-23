@@ -74,18 +74,6 @@ function FileUpload() {
             initialData={processedData}
             onEditComplete={handleEditComplete}
           />
-
-          {editComplete && (
-            <div className="text-center my-4">
-              <button
-                className="btn btn-lg btn-primary"
-                onClick={navigateToPreview}
-              >
-                <i className="bi bi-eye-fill me-2"></i>
-                Previsualizar y Exportar CV
-              </button>
-            </div>
-          )}
         </div>
       ) : (
         <EditCV />

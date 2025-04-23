@@ -181,7 +181,7 @@ function PreviewJsonPage() {
   }
 
   return (
-    <div className="container py-4">
+    <div className="container py-4" style={{ marginTop: "4rem" }}>
       <div className="row mb-4">
         <div className="col">
           <h2 className="mb-4">Previsualización del CV</h2>
