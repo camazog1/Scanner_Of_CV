@@ -165,7 +165,7 @@ function PreviewJsonPage() {
         },
         body: JSON.stringify({ jsonData }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert("Datos guardados exitosamente en la base de datos!");
@@ -177,7 +177,6 @@ function PreviewJsonPage() {
       alert("Hubo un error al guardar los datos.");
     }
   };
-  
 
   if (loading) {
     return (

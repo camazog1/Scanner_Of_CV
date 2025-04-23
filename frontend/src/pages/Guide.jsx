@@ -1,7 +1,7 @@
 import React from "react";
 import GuideAccordion from "../components/GuideAccordion";
 // Si decides crear un nuevo archivo CSS
-import "../assets/styles/Guide.css"; 
+import "../assets/styles/Guide.css";
 // Alternativamente, si ya tienes el CSS de los acordeones importado, solo usa esa importación
 
 function Guide() {
