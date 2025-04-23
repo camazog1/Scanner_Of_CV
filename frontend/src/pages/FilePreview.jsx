@@ -1,5 +1,4 @@
-// frontend/src/pages/FilePreview.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserForm from "../components/UserForm";
 import { uploadCV } from "../services/api";
@@ -119,8 +118,8 @@ function FilePreview() {
     }
   };
 
-  // Determinar el tipo de archivo para mostrar la vista previa
-  const getFilePreview = () => {
+  // Memorizar la vista previa del archivo
+  const filePreview = useMemo(() => {
     if (typeof file === "string") {
       // Es una imagen base64 (capturada con la cámara)
       return (
@@ -151,7 +150,7 @@ function FilePreview() {
         </div>
       );
     }
-  };
+  }, [file]); // Solo se recalcula si `file` cambia
 
   return (
     <div className="file-preview-page">
@@ -172,7 +171,7 @@ function FilePreview() {
           {/* Columna de vista previa */}
           <div className="preview-column">
             <div className="p-4">
-              {getFilePreview()}
+              {filePreview} {/* Usar la vista previa memorizada */}
               
               <div className="file-info mt-3">
                 <h5 className="border-bottom pb-2">Información del archivo</h5>
