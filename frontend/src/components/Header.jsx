@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "@styles/Index.css";
+import "@styles/index.css";
 
 function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
