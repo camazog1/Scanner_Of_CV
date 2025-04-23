@@ -1,0 +1,282 @@
+.camera-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  width: 100%;
+  padding: 0;
+  background-color: #f5f5f5;
+  margin-top: 3rem;
+}
+
+.camera-container {
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh - 80px);
+  background-color: white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-header {
+  padding: 16px 20px;
+  background-color: #6c2beb;
+  color: white;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.camera-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.camera-content {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.webcam-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.webcam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.camera-frame {
+  width: 80%;
+  height: 80%;
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4);
+}
+
+.camera-instruction {
+  position: absolute;
+  bottom: 60px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 80%;
+}
+
+.captured-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  padding: 20px;
+}
+
+.captured-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.camera-controls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid #eaeaea;
+}
+
+.control-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #444;
+  transition: all 0.2s ease;
+  padding: 10px;
+}
+
+.control-button i {
+  font-size: 1.6rem;
+  margin-bottom: 5px;
+}
+
+.control-button:hover {
+  transform: translateY(-2px);
+  color: #6c2beb;
+}
+
+.back-button {
+  color: #666;
+}
+
+.capture-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #6c2beb;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(108, 43, 235, 0.4);
+}
+
+.capture-button i {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.capture-button:hover {
+  background-color: #5620c5;
+  color: white;
+  transform: scale(1.05);
+}
+
+.flip-button {
+  color: #666;
+}
+
+.primary-button {
+  color: #2a8d3e;
+}
+
+.secondary-button {
+  color: #dc3545;
+}
+
+/* Estilos para la pantalla de error de permisos */
+.permission-error {
+  background-color: #f8f9fa;
+}
+
+.permission-container {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .camera-page {
+    padding: 0;
+  }
+
+  .camera-container {
+    box-shadow: none;
+    border-radius: 0;
+    height: 100vh;
+  }
+
+  .camera-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .camera-frame {
+    width: 90%;
+    height: 75%;
+  }
+
+  .camera-instruction {
+    font-size: 0.8rem;
+    bottom: 80px;
+  }
+
+  .control-button span {
+    font-size: 0.8rem;
+  }
+
+  .capture-button {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Animaciones */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.capture-button {
+  animation: pulse 2s infinite;
+}
+
+.capture-button:hover {
+  animation: none;
+}
+
+/* Para pantallas más grandes */
+@media (min-width: 768px) {
+  .camera-container {
+    max-width: 90vw;
+    height: calc(100vh - 100px);
+    margin: 0 auto;
+  }
+
+  .camera-frame {
+    max-width: 80%;
+    max-height: 80%;
+    aspect-ratio: 1 / 1.4; /* Proporción similar a una hoja A4 */
+  }
+}

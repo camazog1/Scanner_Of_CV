@@ -1,0 +1,10 @@
+.main-layout {
+  width: 80vw;
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    width: 100vw;
+    height: auto;
+  }
+}

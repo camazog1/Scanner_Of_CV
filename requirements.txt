@@ -1,2 +1,10 @@
 fastapi
 uvicorn
+python-multipart
+google-cloud-vision
+openai
+python-dotenv
+fitz
+pymupdf
+# Agregamos cors para FastAPI
+fastapi-cors

@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+uploads/
+google_credentials.json
+.env
