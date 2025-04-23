@@ -1,0 +1,33 @@
+.guide-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    /* Añadir margen superior para evitar solapamiento con el header */
+    margin-top: 80px; 
+    font-weight: bold;
+  }
+  
+  .guide-title {
+    text-align: center;
+    color: #6c2beb;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  /* Estilos para el contenedor de acordeones */
+  .accordion-container {
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  /* Asegurar espacio en dispositivos móviles */
+  @media (max-width: 768px) {
+    .guide-content {
+      margin-top: 60px;
+    }
+  }

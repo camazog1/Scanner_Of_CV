@@ -135,6 +135,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
+  max-width: 200px;
+  justify-content: center;
 }
 
 .option-button:hover {
@@ -159,6 +162,7 @@
   text-decoration: underline;
 }
 
+/* Media queries mejoradas para responsividad */
 @media (max-width: 768px) {
   .welcome-title {
     font-size: 2rem;
@@ -177,9 +181,11 @@
   }
 }
 
+/* Ajustes específicos para dispositivos móviles muy pequeños */
 @media (max-width: 576px) {
   .home-container {
     padding: 1.5rem 1rem;
+    margin-top: 80px; /* Espacio para el header fijo */
   }
 
   .welcome-title {
@@ -192,11 +198,22 @@
 
   .upload-title {
     font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-options {
+    grid-template-columns: 1fr; /* Una sola columna en móviles pequeños */
   }
 
   .option-icon-container {
     width: 70px;
     height: 70px;
     font-size: 1.8rem;
+  }
+  
+  .option-button {
+    width: 100%;
+    max-width: 180px;
+    font-size: 0.9rem;
   }
 }

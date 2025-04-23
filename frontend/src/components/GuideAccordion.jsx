@@ -15,26 +15,43 @@ const GuideAccordion = () => {
     {
       id: 'section1',
       title: '¿Cómo subir un PDF?',
-      image: '/api/placeholder/400/300',
-      content: 'Para editar la información de tu perfil, dirígete a la sección "Mi perfil" en el menú principal. Una vez allí, verás un botón de "Editar perfil" que te permitirá modificar tus datos personales, información de contacto y preferencias. Recuerda guardar los cambios antes de salir.'
+      image: '/images/subir-pdf.jpg',
+      content: 'Para subir un PDF dale click al botón "Subir PDF", seguido a esto selecciona un archivo .PDF desde tu dispositivo.'
     },
+    
     {
       id: 'section2',
-      title: '¿Cómo subir una foto?',
-      image: '/api/placeholder/400/300',
-      content: 'Para subir la hoja de vida de un aspirante, pulsa el botón central en la barra inferior (icono "Subir hoja de vida"). Luego, elige el método de carga que prefieras: tomar una foto con la cámara, seleccionar una imagen de tu galería, o subir un archivo PDF. Después de cargar el documento, la aplicación procesará automáticamente la información.'
+      title: '¿Cómo tomar una foto?',
+      image: '/images/tomar-foto.jpg',
+      content: 'Para tomar una foto desde la web de HireLens, dale click al botón "Tomar Foto", esto abrirá la cámara para tomar la foto al documento que se quiera escanear. Para tomar la foto dale click al ícono de la cámara y después "Aceptar.'
     },
     {
       id: 'section3',
       title: '¿Cómo subir una imagen de la galeria?',
-      image: '/api/placeholder/400/300',
-      content: 'Para consultar hojas de vida que ya has subido, ve a la sección "Mi hoja de vida" en la barra de navegación inferior. Allí encontrarás un historial con todas las hojas de vida procesadas, ordenadas por fecha. Puedes filtrar por nombre, fecha o empresa para encontrar rápidamente el documento que buscas.'
+      image: 'images/subir-imagen.jpg',
+      content: 'Para subir una imagen desde la galeria de fotos del dispositivo, dale click al botón "Subir Imagen", seguido a esto selecciona la imagen que quieres escanear.'
     },
     {
       id: 'section4',
       title: '¿Cómo editar un CV?',
-      image: '/api/placeholder/400/300',
-      content: 'Para consultar hojas de vida que ya has subido, ve a la sección "Mi hoja de vida" en la barra de navegación inferior. Allí encontrarás un historial con todas las hojas de vida procesadas, ordenadas por fecha. Puedes filtrar por nombre, fecha o empresa para encontrar rápidamente el documento que buscas.'
+      hasSubsections: true,
+      subsections: [
+        {
+          title: "1. Revisión inicial",
+          image: 'images/edita-cv.jpeg',
+          content: 'Una vez subido el archivo para escanear, este será procesado y extraerá la información para poder ser editada. Revisa que los datos básicos hayan sido extraídos correctamente.'
+        },
+        {
+          title: "2. Guardar la información",
+          image: 'images/finalizar-edicion.jpeg',
+          content: 'Después de edita la información del documento, para guardarla has click en "Finalizar Edición".'
+        },
+        {
+          title: "3. Vista prevía y JSON",
+          image: 'images/vista-previa.jpeg',
+          content: 'Al finalizar la edición se mostrará una vista prevía del texto extraído y de los datos extraídos en formato JSON.'
+        }
+      ]
     }
   ];
 
@@ -57,18 +74,40 @@ const GuideAccordion = () => {
           
           {activeSection === section.id && (
             <div className="accordion-body p-3">
-              <div className="row">
-                <div className="col-md-6 mb-3 mb-md-0">
-                  <img 
-                    src={section.image} 
-                    alt={`${section.title}`} 
-                    className="img-fluid rounded shadow-sm"
-                  />
+              {section.hasSubsections ? (
+                <div className="subsections">
+                  {section.subsections.map((subsection, index) => (
+                    <div key={index} className="subsection mb-4 pb-4 border-bottom">
+                      <h4 className="fs-6 mb-3 text-primary">{subsection.title}</h4>
+                      <div className="row">
+                        <div className="col-md-6 mb-3 mb-md-0">
+                          <img 
+                            src={subsection.image} 
+                            alt={subsection.title} 
+                            className="img-fluid rounded shadow-sm"
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <p>{subsection.content}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="col-md-6">
-                  <p>{section.content}</p>
+              ) : (
+                <div className="row">
+                  <div className="col-md-6 mb-3 mb-md-0">
+                    <img 
+                      src={section.image} 
+                      alt={`${section.title}`} 
+                      className="img-fluid rounded shadow-sm"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <p>{section.content}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
