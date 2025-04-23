@@ -122,14 +122,8 @@ function EditCV({ initialData = null, onEditComplete = null }) {
 
   return (
     <div className="container-fluid w-100 p-4 bg-light">
-      <h1 className="text-center mb-4 mt-4">Editar CV</h1>
+      <h2 className="text-center mb-4 mt-4">Editar CV</h2>
       <div className="mt-4">
-        <label
-          htmlFor="formstep"
-          className="form-label bg-info rounded text-white p-2"
-        >
-          <b>{TRANSLATIONS[SECTIONS[step]]}</b>
-        </label>
         <input
           name="formstep"
           type="range"
@@ -144,7 +138,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
       {/* <!-- Navigation form  --> */}
       <form className="pb-4">
         {SECTIONS[step] && data[SECTIONS[step]] && (
-          <fieldset className="p-3 bg-white shadow-sm rounded border border-dark">
+          <fieldset className="p-3 bg-white shadow-sm rounded border border-gray">
             <legend className="fw-bold">
               {TRANSLATIONS[SECTIONS[step]] || SECTIONS[step]}
             </legend>
@@ -177,20 +171,10 @@ function EditCV({ initialData = null, onEditComplete = null }) {
               }
             }}
           >
-            {step === SECTIONS.length - 1 ? "Finalizar Edición" : "Siguiente >"}
+            {step === SECTIONS.length - 1 ? "Finalizar Edición" : "Siguiente"}
           </button>
         </div>
       </form>
-
-      {isComplete && onEditComplete && (
-        <div className="alert alert-success mt-4">
-          <h4 className="alert-heading">¡Edición completada!</h4>
-          <p>
-            Has completado la edición del CV. Ahora puedes previsualizar y
-            exportar el resultado.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
