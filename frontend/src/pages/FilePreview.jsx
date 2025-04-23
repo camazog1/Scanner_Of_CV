@@ -36,8 +36,14 @@ function FilePreview() {
       <div className="container mt-5">
         <div className="alert alert-warning p-4 shadow-sm">
           <h4 className="alert-heading">No se seleccionó ningún archivo</h4>
-          <p>Por favor, seleccione un archivo o capture una imagen para continuar.</p>
-          <button className="btn btn-primary mt-3" onClick={() => navigate("/")}>
+          <p>
+            Por favor, seleccione un archivo o capture una imagen para
+            continuar.
+          </p>
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() => navigate("/")}
+          >
             Volver al inicio
           </button>
         </div>
@@ -124,7 +130,11 @@ function FilePreview() {
       // Es una imagen base64 (capturada con la cámara)
       return (
         <div className="preview-container">
-          <img src={file} alt="Vista previa de la imagen" className="img-fluid rounded shadow" />
+          <img
+            src={file}
+            alt="Vista previa de la imagen"
+            className="img-fluid rounded shadow"
+          />
         </div>
       );
     } else if (file.type.startsWith("image/")) {
@@ -161,28 +171,31 @@ function FilePreview() {
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Cargando...</span>
             </div>
-            <p className="mt-3 text-black">Procesando archivo, por favor espere...</p>
+            <p className="mt-3 text-black">
+              Procesando archivo, por favor espere...
+            </p>
           </div>
         </div>
       )}
-      
+
       <div className="preview-card">
         <div className="preview-layout">
           {/* Columna de vista previa */}
           <div className="preview-column">
             <div className="p-4">
               {filePreview} {/* Usar la vista previa memorizada */}
-              
               <div className="file-info mt-3">
                 <h5 className="border-bottom pb-2">Información del archivo</h5>
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item bg-light">
                     <i className="bi bi-file-earmark me-2"></i>
-                    <strong>Tipo:</strong> {typeof file === "string" ? "Imagen capturada" : file.type}
+                    <strong>Tipo:</strong>{" "}
+                    {typeof file === "string" ? "Imagen capturada" : file.type}
                   </li>
                   <li className="list-group-item bg-light">
                     <i className="bi bi-hdd me-2"></i>
-                    <strong>Tamaño:</strong> {typeof file === "string"
+                    <strong>Tamaño:</strong>{" "}
+                    {typeof file === "string"
                       ? "N/A"
                       : `${(file.size / 1024).toFixed(2)} KB`}
                   </li>
@@ -190,15 +203,17 @@ function FilePreview() {
               </div>
             </div>
           </div>
-          
+
           {/* Columna de formulario */}
           <div className="form-column">
             <div className="p-4">
-              <h4 className="mb-4 text-center"><b>Datos del Aspirante</b></h4>
-              
+              <h4 className="mb-4 text-center">
+                <b>Datos del Aspirante</b>
+              </h4>
+
               {/* Formulario de datos del usuario */}
               <UserForm userData={userData} setUserData={setUserData} />
-              
+
               {/* Mensajes de error o éxito */}
               {error && (
                 <div className="alert alert-danger" role="alert">
@@ -206,14 +221,14 @@ function FilePreview() {
                   {error}
                 </div>
               )}
-              
+
               {success && (
                 <div className="alert alert-success" role="alert">
                   <i className="bi bi-check-circle-fill me-2"></i>
                   {success}
                 </div>
               )}
-              
+
               {/* Botones */}
               <div className="button-controls mt-4">
                 <button

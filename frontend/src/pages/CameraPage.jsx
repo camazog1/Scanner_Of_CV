@@ -15,7 +15,9 @@ function CameraPage() {
   useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent.toLowerCase(),
+      );
     };
     setIsMobile(checkMobile());
 
@@ -67,11 +69,14 @@ function CameraPage() {
           <i className="bi bi-camera-video-off error-icon"></i>
           <h2>Permisos de cámara requeridos</h2>
           <p>
-            Para utilizar esta funcionalidad, debes permitir el acceso a la cámara
-            en tu navegador.
+            Para utilizar esta funcionalidad, debes permitir el acceso a la
+            cámara en tu navegador.
           </p>
           <div className="button-row">
-            <button className="btn btn-primary" onClick={() => window.location.reload()}>
+            <button
+              className="btn btn-primary"
+              onClick={() => window.location.reload()}
+            >
               Reintentar
             </button>
             <button className="btn btn-secondary" onClick={handleGoBack}>
@@ -102,13 +107,18 @@ function CameraPage() {
               <div className="camera-overlay">
                 <div className="camera-frame"></div>
                 <p className="camera-instruction">
-                  Coloca el CV dentro del marco y asegúrate de que esté bien iluminado
+                  Coloca el CV dentro del marco y asegúrate de que esté bien
+                  iluminado
                 </p>
               </div>
             </div>
           ) : (
             <div className="captured-image-container">
-              <img src={capturedImage} alt="captured" className="captured-image" />
+              <img
+                src={capturedImage}
+                alt="captured"
+                className="captured-image"
+              />
             </div>
           )}
         </div>
@@ -116,26 +126,26 @@ function CameraPage() {
         <div className="camera-controls">
           {!capturedImage ? (
             <>
-              <button 
-                className="control-button back-button" 
-                onClick={handleGoBack} 
+              <button
+                className="control-button back-button"
+                onClick={handleGoBack}
                 title="Volver"
               >
                 <i className="bi bi-arrow-left"></i>
                 <span>Volver</span>
               </button>
-              
-              <button 
-                className="control-button capture-button" 
+
+              <button
+                className="control-button capture-button"
                 onClick={handleCapture}
                 title="Capturar"
               >
                 <i className="bi bi-camera"></i>
               </button>
-              
+
               {isMobile && (
-                <button 
-                  className="control-button flip-button" 
+                <button
+                  className="control-button flip-button"
                   onClick={handleFlipCamera}
                   title="Cambiar cámara"
                 >
@@ -146,17 +156,17 @@ function CameraPage() {
             </>
           ) : (
             <>
-              <button 
-                className="control-button secondary-button" 
+              <button
+                className="control-button secondary-button"
                 onClick={handleRetake}
                 title="Reintentar"
               >
                 <i className="bi bi-arrow-counterclockwise"></i>
                 <span>Reintentar</span>
               </button>
-              
-              <button 
-                className="control-button primary-button" 
+
+              <button
+                className="control-button primary-button"
                 onClick={handleAccept}
                 title="Aceptar"
               >

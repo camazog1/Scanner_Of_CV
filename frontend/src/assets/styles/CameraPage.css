@@ -214,31 +214,31 @@
   .camera-page {
     padding: 0;
   }
-  
+
   .camera-container {
     box-shadow: none;
     border-radius: 0;
     height: 100vh;
   }
-  
+
   .camera-header h2 {
     font-size: 1.1rem;
   }
-  
+
   .camera-frame {
     width: 90%;
     height: 75%;
   }
-  
+
   .camera-instruction {
     font-size: 0.8rem;
     bottom: 80px;
   }
-  
+
   .control-button span {
     font-size: 0.8rem;
   }
-  
+
   .capture-button {
     width: 60px;
     height: 60px;
@@ -247,9 +247,15 @@
 
 /* Animaciones */
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .capture-button {
@@ -267,7 +273,7 @@
     height: calc(100vh - 100px);
     margin: 0 auto;
   }
-  
+
   .camera-frame {
     max-width: 80%;
     max-height: 80%;

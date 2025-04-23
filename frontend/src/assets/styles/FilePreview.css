@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;  /* Aumentado el padding superior */
+  padding: 2.5rem 1.5rem; /* Aumentado el padding superior */
 }
 
 .preview-card {
@@ -10,7 +10,7 @@
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  margin-top: 1rem;  /* Espacio adicional en la parte superior */
+  margin-top: 1rem; /* Espacio adicional en la parte superior */
 }
 
 .card-header {
@@ -121,8 +121,12 @@
 
 /* Animaciones */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .alert {

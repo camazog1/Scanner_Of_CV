@@ -34,10 +34,15 @@ function App() {
       </div>
 
       <div className="upload-section">
-        <h2 className="upload-title">¿Cómo deseas subir la hoja de vida del aspirante?</h2>
-        
+        <h2 className="upload-title">
+          ¿Cómo deseas subir la hoja de vida del aspirante?
+        </h2>
+
         <div className="upload-options">
-          <div className="upload-option" onClick={() => handleButtonClick("uploadPDF")}>
+          <div
+            className="upload-option"
+            onClick={() => handleButtonClick("uploadPDF")}
+          >
             <div className="option-icon-container pdf-bg">
               <i className="bi bi-file-earmark-pdf"></i>
             </div>
@@ -55,7 +60,10 @@ function App() {
             />
           </div>
 
-          <div className="upload-option" onClick={() => handleButtonClick("takePhoto")}>
+          <div
+            className="upload-option"
+            onClick={() => handleButtonClick("takePhoto")}
+          >
             <div className="option-icon-container camera-bg">
               <i className="bi bi-camera"></i>
             </div>
@@ -66,7 +74,10 @@ function App() {
             </button>
           </div>
 
-          <div className="upload-option" onClick={() => handleButtonClick("uploadImage")}>
+          <div
+            className="upload-option"
+            onClick={() => handleButtonClick("uploadImage")}
+          >
             <div className="option-icon-container gallery-bg">
               <i className="bi bi-images"></i>
             </div>
@@ -88,7 +99,8 @@ function App() {
 
       <div className="help-section">
         <p>
-          <i className="bi bi-info-circle"></i> ¿Necesitas ayuda? Consulta nuestra{" "}
+          <i className="bi bi-info-circle"></i> ¿Necesitas ayuda? Consulta
+          nuestra{" "}
           <a href="/guide" className="guide-link">
             guía de uso
           </a>

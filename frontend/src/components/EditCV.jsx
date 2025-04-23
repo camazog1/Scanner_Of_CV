@@ -124,7 +124,6 @@ function EditCV({ initialData = null, onEditComplete = null }) {
     <div className="container-fluid w-100 p-4 bg-light">
       <h2 className="text-center mb-4 mt-4">Editar CV</h2>
       <div className="mt-4">
-
         <input
           name="formstep"
           type="range"

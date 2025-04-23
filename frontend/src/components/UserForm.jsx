@@ -13,7 +13,6 @@ function UserForm({ userData, setUserData }) {
 
   return (
     <div className="user-form p-3 mb-4 border rounded">
-
       <div className="mb-3">
         <label htmlFor="name" className="form-label">
           Nombre <span className="text-danger">*</span>
