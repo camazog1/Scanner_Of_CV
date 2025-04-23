@@ -2,6 +2,7 @@
 import pytest
 import os
 import sys
+import json
 from pathlib import Path
 
 # Obtener la ruta absoluta del directorio raíz del proyecto
@@ -45,4 +46,4 @@ def sample_json_file(temp_dir):
 def test_app():
     from fastapi.testclient import TestClient
     from app.main import app
-    return TestClient(app)  
+    return TestClient(app)
