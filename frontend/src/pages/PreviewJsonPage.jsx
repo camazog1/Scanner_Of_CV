@@ -156,6 +156,29 @@ function PreviewJsonPage() {
     );
   };
 
+  const saveToDatabase = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/save-cv", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jsonData }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert("Datos guardados exitosamente en la base de datos!");
+      } else {
+        alert(`Error: ${data.error || "Error desconocido"}`);
+      }
+    } catch (error) {
+      console.error("Error al guardar en la base de datos:", error);
+      alert("Hubo un error al guardar los datos.");
+    }
+  };
+  
+
   if (loading) {
     return (
       <div
@@ -194,6 +217,10 @@ function PreviewJsonPage() {
             <button className="btn btn-success" onClick={downloadAsPDF}>
               <i className="bi bi-file-earmark-pdf me-2"></i>
               Descargar como PDF
+            </button>
+            <button className="btn btn-info" onClick={saveToDatabase}>
+              <i className="bi bi-save me-2"></i>
+              Guardar en Base de Datos
             </button>
           </div>
         </div>
