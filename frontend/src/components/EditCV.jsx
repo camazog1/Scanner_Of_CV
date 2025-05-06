@@ -81,7 +81,6 @@ function EditCV() {
     const navigate = useNavigate();
     const location = useLocation();
     const resumeData = location.state?.processedData;
-    const fromPreview = location.state?.fromPreview;
 
     const [state, dispatch] = useReducer(cvReducer, {
         ...initialState,
@@ -89,13 +88,13 @@ function EditCV() {
     });
 
     useEffect(() => {
-        if (!fromPreview) {
-            const timeout = setTimeout(() => {
-                dispatch({ type: "SET_DATA", payload: JSON.parse(JSON.stringify(RAW_JSON)) });
-            }, 100);
-            return () => clearTimeout(timeout);
+        if (resumeData) {
+            dispatch({ type: "SET_DATA", payload: resumeData });
+        } else {
+            // fallback to RAW_JSON if nothing was passed
+            dispatch({ type: "SET_DATA", payload: JSON.parse(JSON.stringify(RAW_JSON)) });
         }
-    }, [fromPreview]);
+    }, [resumeData]);
 
     const handleChange = (section, index, key, value, subKey = null) => {
         dispatch({ type: "UPDATE_FIELD", payload: { section, index, key, value, subKey } });
