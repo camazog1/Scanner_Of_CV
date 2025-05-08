@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "@styles/Index.css";
+import "@styles/index.css";
 
 function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -48,18 +48,13 @@ function Header() {
           <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/dashboard" className="nav-link text-white">
-                  Dashboard
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/file-upload" className="nav-link text-white">
-                  File upload
+                <Link to="/" className="nav-link text-white">
+                  <b>Subir CV</b>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/guide" className="nav-link text-white">
-                  Guía
+                  <b>Guía</b>
                 </Link>
               </li>
 

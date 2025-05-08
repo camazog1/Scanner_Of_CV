@@ -248,6 +248,7 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
                     )
                 }
 
+<<<<<<< HEAD
             </div>
         );
     }
@@ -270,6 +271,66 @@ function renderSection(sectionData, section, handleChange, handleAddItem, handle
                                 placeholder={CV_PLACEHOLDERS[subKey] || subKey}
                             />
 
+=======
+  return (
+    <div className="container-fluid w-100 p-4 bg-light">
+      <h2 className="text-center mb-4 mt-4">Editar CV</h2>
+      <div className="mt-4">
+        <input
+          name="formstep"
+          type="range"
+          min="0"
+          max={SECTIONS.length - 1}
+          value={step}
+          onChange={(e) => setStep(parseInt(e.target.value))}
+          className="form-range"
+        />
+      </div>
+
+      {/* <!-- Navigation form  --> */}
+      <form className="pb-4">
+        {SECTIONS[step] && data[SECTIONS[step]] && (
+          <fieldset className="p-3 bg-white shadow-sm rounded border border-gray">
+            <legend className="fw-bold">
+              {TRANSLATIONS[SECTIONS[step]] || SECTIONS[step]}
+            </legend>
+            {renderSection(
+              data[SECTIONS[step]],
+              SECTIONS[step],
+              handleChange,
+              handleAddItem,
+              handleRemoveItem,
+            )}
+          </fieldset>
+        )}
+        <div className="navigation-buttons-c w-100 d-flex justify-content-between mt-4 ">
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            disabled={step === 0}
+            onClick={() => setStep((prev) => prev - 1)}
+          >
+            &lt; Anterior
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              if (step < SECTIONS.length - 1) {
+                setStep((prev) => prev + 1);
+              } else {
+                handleSubmit();
+              }
+            }}
+          >
+            {step === SECTIONS.length - 1 ? "Finalizar Edición" : "Siguiente"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+>>>>>>> 4587dfccf5c9496889ce13a8de20f5868b7e9d7d
 
                         ))}
                         <button
