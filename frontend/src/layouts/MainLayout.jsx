@@ -4,7 +4,7 @@ import "@styles/mainLayout.css";
 
 function MainLayout() {
   return (
-    <div className="main-layout d-flex flex-column min-vh-100 h-auto">
+    <div className="main-layout d-flex flex-column min-vh-100 min-vw-100 h-auto">
       <Header />
       <div className="container flex-grow-1 d-flex p-4">
         <Outlet /> {/* This will render the current page */}
