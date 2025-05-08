@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import EditCV from "@components/EditCV";
+import EditCV from "@components/ModifyCV/EditCV";
 
 function FileUpload() {
   const location = useLocation();
