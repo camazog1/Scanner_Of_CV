@@ -143,6 +143,8 @@ body {
   }
 
   body {
-    padding-bottom: 60px;
+    padding-top: 60px;   /* Ajusta según la altura real de .mobile-header */
+    padding-bottom: 60px; /* Ya lo tienes, esto es correcto */
   }
 }
+
