@@ -6,5 +6,7 @@ openai
 python-dotenv
 fitz
 pymupdf
+PyJWT
+passlib
 # Agregamos cors para FastAPI
 fastapi-cors

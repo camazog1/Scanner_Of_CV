@@ -13,6 +13,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from google.cloud import vision
 from openai import OpenAI
 from dotenv import load_dotenv
+from app.database import verify_token, verify_user, save_token
 
 # Cargar variables de entorno de .env
 load_dotenv()
@@ -36,6 +37,8 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 SECRET_KEY = os.getenv("SECRET_KEY", "tu_clave_secreta_muy_segura")  # ¡No uses una clave tan simple en producción!
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+tokens = []
 
 security = HTTPBearer()
 
@@ -61,15 +64,16 @@ security = HTTPBearer()
 
 async def get_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
-    if token != os.getenv("API_TOKEN"):
+    if not verify_token(token):
         raise HTTPException(status_code=401, detail="Invalid API token")
     return token
 
 @router.post("/token")
 async def login(username: str, password: str):
-    if username == "testuser" and password == "testpass":
+    if verify_user(username, password):
         access_token_data = {"sub": username}
         access_token = create_access_token(access_token_data)
+        save_token(username, access_token)
         return {"access_token": access_token, "token_type": "bearer"}
     else:
         raise HTTPException(status_code=401, detail="Incorrect username or password")

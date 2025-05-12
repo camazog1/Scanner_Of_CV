@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import main_process
+from app.database import init_db
 
 app = FastAPI()
+init_db()
 
 # Configurar CORS para permitir la comunicación entre frontend y backend
 app.add_middleware(

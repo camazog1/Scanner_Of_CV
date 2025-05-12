@@ -48,6 +48,9 @@ export const uploadCV = async (file, userData) => {
   const formData = new FormData();
   formData.append("file", fileToUpload);
 
+  // Token proporcionado
+  const token = import.meta.env.VITE_SCANNER_TOKEN;
+
   try {
     console.log("Enviando datos a la API:", url);
     console.log("Archivo:", {
@@ -60,7 +63,9 @@ export const uploadCV = async (file, userData) => {
     const response = await fetch(url, {
       method: "POST",
       body: formData,
-      // Agregar timeout para evitar que la petición quede colgada
+      headers: {
+        Authorization: `Bearer ${token}`, // Agregar el token en el encabezado
+      },
       signal: AbortSignal.timeout(60000), // 60 segundos de timeout
     });
 
@@ -129,7 +134,7 @@ export const uploadCV = async (file, userData) => {
       );
       throw new Error(
         "La respuesta del servidor no es un JSON válido: " +
-          responseText.substring(0, 100),
+        responseText.substring(0, 100),
       );
     }
 
