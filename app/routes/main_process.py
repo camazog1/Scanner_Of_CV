@@ -1,3 +1,5 @@
+import jwt
+import datetime
 import os
 import shutil
 import json
@@ -5,8 +7,9 @@ import re
 import time
 import uuid
 from pathlib import Path
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from google.cloud import vision
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -28,9 +31,52 @@ router = APIRouter()
 UPLOAD_DIR = Path("uploads") 
 UPLOAD_DIR.mkdir(exist_ok=True) 
 
+# ========================== TOKEN ==========================
+
+SECRET_KEY = os.getenv("SECRET_KEY", "tu_clave_secreta_muy_segura")  # ¡No uses una clave tan simple en producción!
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+security = HTTPBearer()
+
+def create_access_token(data: dict, expires_delta: datetime.timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+security = HTTPBearer()
+
+async def get_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    if token != os.getenv("API_TOKEN"):
+        raise HTTPException(status_code=401, detail="Invalid API token")
+    return token
+
+@router.post("/token")
+async def login(username: str, password: str):
+    if username == "testuser" and password == "testpass":
+        access_token_data = {"sub": username}
+        access_token = create_access_token(access_token_data)
+        return {"access_token": access_token, "token_type": "bearer"}
+    else:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+
 # ========================== ROUTES ==========================
 
-@router.post("/CV_Extraction/")
+@router.post("/CV_Extraction/", dependencies=[Depends(get_token)])
 async def upload_file(name: str, email: str, phone: str, file: UploadFile = File(...)):
     allowed_types = ["image/png", "image/jpeg", "application/pdf"]
     
