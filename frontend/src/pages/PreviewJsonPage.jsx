@@ -133,10 +133,10 @@ function PreviewJsonPage() {
         doc.text(`${skill.name || ""} (${skill.level || ""})`, 20, yPosition);
         yPosition += 5;
 
-        if (skill.keywords && skill.keywords.length > 0) {
+        /*if (skill.keywords && skill.keywords.length > 0) {
           doc.text(`Keywords: ${skill.keywords.join(", ")}`, 20, yPosition);
           yPosition += 5;
-        }
+        }*/
 
         yPosition += 3;
       });
