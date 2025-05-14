@@ -74,7 +74,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
     const handleSubmit = async () => {
         const validation = validateVisibleSections(state.data, state.visibleSections); // Use `state.visibleSections` not `VISIBLE_SECTIONS`
         
-        /*if (!validation.valid) {
+        /*if (!validation.        git commit -m "Resuelto conflicto en EditCV.jsx"valid) {
             const section = validation.section;
             const index = state.visibleSections.indexOf(section);
     
