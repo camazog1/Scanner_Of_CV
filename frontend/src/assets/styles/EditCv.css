@@ -31,3 +31,137 @@
 .navigation-buttons-c {
   margin-bottom: 100px !important;
 }
+
+.left-column,
+.right-column {
+  background: white; /* Ensure background is solid so glow shows */
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* RIGHT COLUMN GLOW */
+.right-column {
+  box-shadow:
+    0 0 30px rgba(111, 66, 193, 0.2),
+    0 0 45px rgba(111, 66, 193, 0.1);
+}
+
+/* LEFT COLUMN GLOW */
+.left-column {
+  box-shadow:
+    0 0 8px rgba(66, 193, 174, 0.18),
+    0 0 16px rgba(66, 193, 174, 0.12);
+}
+
+
+.left-column,
+.right-column {
+  border: 1px solid rgba(201, 7, 7, 0.1); 
+  backdrop-filter: blur(2px);
+}
+
+
+
+/* LEFT COLUMN - Púrpura */
+.left-column {
+  background-color: #fff;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 15px rgba(111, 66, 193, 0.2); /* Púrpura */
+  border-top: 3px solid var(--color-primary);
+}
+
+/* RIGHT COLUMN - Verde azulado */
+.right-column {
+  background-color: #fff;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 15px rgba(66, 193, 165, 0.2); /* Verde azulado */
+  border-top: 3px solid var(--color-secondary);
+}
+
+/* MOVE THROUGH SECTION - Naranja terroso */
+.move-through-section {
+  background-color: #fff;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 15px rgba(193, 114, 66, 0.2); /* Naranja terroso */
+  border-top: 3px solid var(--color-tertiary);
+}
+
+/* Estilos para títulos específicos para cada sección */
+.left-column h2 {
+  color: var(--color-primary);
+}
+
+.right-column h5 {
+  color: var(--color-secondary);
+}
+
+.move-through-section h5 {
+  color: var(--color-tertiary);
+}
+
+/* Botones con colores complementarios */
+.left-column .btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.right-column .btn-outline-primary {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.right-column .btn-outline-primary:hover {
+  background-color: var(--color-secondary);
+  color: white;
+  border-color: var(--color-secondary);
+}
+
+.move-through-section .btn-outline-secondary.active {
+  background-color: var(--color-tertiary);
+  color: white;
+  border-color: var(--color-tertiary);
+}
+
+.right-column .btn,
+.move-through-section .btn {
+  transition: all 0.3s ease;
+}
+
+.right-column .btn:hover,
+.move-through-section .btn:hover {
+  transform: scale(1.05);
+  z-index: 2; 
+}
+
+.right-column .btn-outline-primary:hover {
+  background-color: var(--color-secondary);
+  color: white;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 8px rgba(66, 193, 165, 0.4);
+}
+
+.move-through-section .btn-outline-secondary:hover {
+  background-color: rgba(193, 114, 66, 0.1);
+  border-color: var(--color-tertiary);
+  color: var(--color-tertiary);
+}
+
+/* Makes the active button in the move-through section more prominent */
+.move-through-section .btn-outline-secondary.active {
+  background-color: var(--color-tertiary);
+  color: white;
+  border-color: var(--color-tertiary);
+  transform: scale(1.05); 
+}
+
+.move-through-section .btn-outline-secondary.active:hover {
+  background-color: var(--color-tertiary);
+  color: white;
+}

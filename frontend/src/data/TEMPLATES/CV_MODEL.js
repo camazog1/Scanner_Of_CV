@@ -2,6 +2,7 @@ const CV_MODEL_JSON = {
     basics: {
       name: "",
       label: "",
+      image: "",
       email: "",
       phone: "",
       url: "",
