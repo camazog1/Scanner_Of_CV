@@ -5,14 +5,13 @@ import { useLocation } from "react-router-dom";
 import CV_MODEL_JSON from "@data/TEMPLATES/CV_MODEL.js";
 import TRANSLATIONS from "@data/CV/Translations.js";
 import FilePreview from "@pages/FilePreview";
+import CV_DESCRIPTION from "@data/CV/Descriptions.js";
 
-import renderSection from "./RenderSection.jsx";
+import RenderSection from "./RenderSection.jsx";
 import { cvReducer } from './reducer.js';
 import { validateVisibleSections } from './utils.js';
 import ModalError from "./ModalError.jsx";
 import ModalSuccess from "./ModalSuccess.jsx";
-
-
 
 import "@styles/EditCV.css";
 
@@ -37,6 +36,10 @@ const initialState = {
     visibleSections: ALL_SECTIONS.filter(section => !OPTIONAL_SECTIONS.includes(section))
 };
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function EditCV({ initialData = null, onEditComplete = null }) {
     const location = useLocation();
     const resumeData = initialData || location.state?.processedData;
@@ -59,6 +62,11 @@ function EditCV({ initialData = null, onEditComplete = null }) {
         }
     }, [resumeData, initialData]);
 
+    useEffect(() => {
+        scrollToTop();
+    }, [state.step]);
+
+
     const handleChange = (section, index, key, value, subKey = null) => {
         dispatch({ type: "UPDATE_FIELD", payload: { section, index, key, value, subKey } });
     };
@@ -72,7 +80,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
     };
 
     const handleSubmit = async () => {
-        const validation = validateVisibleSections(state.data, state.visibleSections); // Use `state.visibleSections` not `VISIBLE_SECTIONS`
+        /*const validation = validateVisibleSections(state.data, state.visibleSections); // Use `state.visibleSections` not `VISIBLE_SECTIONS`
         
         /*if (!validation.        git commit -m "Resuelto conflicto en EditCV.jsx"valid) {
             const section = validation.section;
@@ -86,12 +94,12 @@ function EditCV({ initialData = null, onEditComplete = null }) {
             setShowValidationModal(true);
             return;
         }*/
-    
         try {
             if (onEditComplete) {
                 onEditComplete(state.data);
                 //alert("CV guardado exitosamente.");
                 setShowSuccessModal(true);
+                scrollToTop();
             }
             // navigate('/file-preview', { state: { resumeData: state.data } });
         } catch (error) {
@@ -107,7 +115,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
         console.log("Toggling modal");
         setShowSuccessModal(prev => !prev);
     };
-    
+
 
     if (!state.data || Object.keys(state.data).length === 0)
         return (
@@ -120,7 +128,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
                 </div>
             </div>
         );
-    
+
     return (
         <>
             <div className="container-fluid w-100 vh-auto p-4 bg-light">
@@ -136,7 +144,8 @@ function EditCV({ initialData = null, onEditComplete = null }) {
 
                 <div className="row mt-4">
                     {/* LEFT: Main form */}
-                    <div className="col-md-9">
+
+                    <div className="col-md-9 left-column pt-2">
                         {/* Display Encouraging Message */}
                         <div className="mb-3 text-center text-success">
                             {Math.round(((state.step + 1) / state.visibleSections.length) * 100) < 50 ? (
@@ -167,18 +176,33 @@ function EditCV({ initialData = null, onEditComplete = null }) {
                             </div>
                         </div>
 
+
                         <h2 className="text-center mb-4">{TRANSLATIONS[state.visibleSections[state.step]]}</h2>
+                        {/* Brief Description */}
+
+                        <div className="mb-3">
+                            <p className="text-muted justify-content-center text-justify" style={{ fontStyle: "italic" }}>
+                                {CV_DESCRIPTION[state.visibleSections[state.step]]}
+                            </p>
+                        </div>
 
                         {/* Render Current Section */}
                         {state.visibleSections[state.step] && state.data[state.visibleSections[state.step]] && (
                             <fieldset>
-                                {renderSection(
+                                <RenderSection
+                                    sectionData={state.data[state.visibleSections[state.step]]}
+                                    section={state.visibleSections[state.step]}
+                                    handleChange={handleChange}
+                                    handleAddItem={handleAddItem}
+                                    handleRemoveItem={handleRemoveItem}
+                                />
+                                {/*renderSection(
                                     state.data[state.visibleSections[state.step]],
                                     state.visibleSections[state.step],
                                     handleChange,
                                     handleAddItem,
                                     handleRemoveItem
-                                )}
+                                )*/}
                             </fieldset>
                         )}
 
@@ -190,7 +214,10 @@ function EditCV({ initialData = null, onEditComplete = null }) {
                                     type="button"
                                     className="btn btn-outline-secondary"
                                     disabled={state.step === 0}
-                                    onClick={() => dispatch({ type: "SET_STEP", payload: state.step - 1 })}
+                                    onClick={() => {
+                                        dispatch({ type: "SET_STEP", payload: state.step - 1 });
+                                    }
+                                    }
                                 >
                                     &lt; Anterior
                                 </button>
@@ -213,8 +240,10 @@ function EditCV({ initialData = null, onEditComplete = null }) {
 
                     {/* RIGHT: Optional sections */}
                     <div className="col-md-3">
-                        <div className="bg-white p-3 border rounded shadow-sm">
-                            <h5 className="fw-bold mb-3">Agregar secciones</h5>
+                        <div className="p-3 border rounded right-column">
+                            <h5 className="fw-bold mb-3">
+                                <span style={{ color: '#28a745' }} role="img" aria-label="signo más">➕</span> Agregar secciones
+                            </h5>
                             {OPTIONAL_SECTIONS
                                 .filter(section => !state.visibleSections.includes(section))
                                 .map(section => (
@@ -226,6 +255,22 @@ function EditCV({ initialData = null, onEditComplete = null }) {
                                         + {TRANSLATIONS[section]}
                                     </button>
                                 ))}
+                        </div>
+
+                        {/* Move through section */}
+                        <div className="p-3 border rounded mt-4 move-through-section">
+                            <h5 className="fw-bold mb-3">
+                                <span role="img" aria-label="flecha derecha">➡️</span> Ir a...
+                            </h5>
+                            {state.visibleSections.map((section, index) => (
+                                <button
+                                    key={section}
+                                    className={`btn btn-outline-secondary btn-sm d-block mb-2 w-100 ${index === state.step ? "active" : ""}`}
+                                    onClick={() => dispatch({ type: "SET_STEP", payload: index })}
+                                >
+                                    {TRANSLATIONS[section]}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>

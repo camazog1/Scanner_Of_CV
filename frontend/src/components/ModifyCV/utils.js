@@ -1,3 +1,5 @@
+import colombiaCities from '@data/CV/Cities';
+
 //Allow empty input creation for each section with a '+' button
 export function createEmptyTemplate(template) {
     if (!template || typeof template !== 'object') return {};
@@ -44,4 +46,25 @@ export const validateVisibleSections = (data, visibleSections) => {
     }
 
     return { valid: true };
+};
+
+// Solo usamos Colombia como país para simplificar
+export const countries = [
+  { code: "CO", name: "Colombia" }
+  // Puedes agregar más países según necesites
+];
+
+// Extraemos los departamentos del archivo de ciudades
+export const regions = {
+  CO: colombiaCities.map(dept => dept.departamento).sort()
+  // Puedes agregar más países siguiendo el mismo formato
+};
+
+// Organizamos las ciudades por departamento
+export const getCitiesByRegion = (region) => {
+  const departamento = colombiaCities.find(
+    dept => dept.departamento === region
+  );
+  
+  return departamento ? departamento.ciudades.sort() : [];
 };
