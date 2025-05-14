@@ -74,7 +74,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
     const handleSubmit = async () => {
         const validation = validateVisibleSections(state.data, state.visibleSections); // Use `state.visibleSections` not `VISIBLE_SECTIONS`
         
-        if (!validation.valid) {
+        /*if (!validation.valid) {
             const section = validation.section;
             const index = state.visibleSections.indexOf(section);
     
@@ -85,7 +85,7 @@ function EditCV({ initialData = null, onEditComplete = null }) {
             setMissingSection(TRANSLATIONS[section] || section);
             setShowValidationModal(true);
             return;
-        }
+        }*/
     
         try {
             if (onEditComplete) {
