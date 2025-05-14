@@ -13,7 +13,7 @@ import { validateVisibleSections } from './utils.js';
 import ModalError from "./ModalError.jsx";
 import ModalSuccess from "./ModalSuccess.jsx";
 
-import "@styles/EditCV.css";
+import "@styles/EditCv.css";
 
 const OPTIONAL_SECTIONS = [
     "awards",
