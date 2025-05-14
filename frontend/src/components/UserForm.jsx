@@ -45,7 +45,7 @@ function UserForm({ userData, setUserData }) {
 
       <div className="mb-3">
         <label htmlFor="phone" className="form-label">
-          Teléfono <span className="text-danger">*</span>
+          Teléfono (sin indicativo) <span className="text-danger">*</span>
         </label>
         <input
           type="tel"

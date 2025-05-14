@@ -3,6 +3,9 @@
   --secondary-color: #f5f5f5;
   --sections-length: 0;
   --step-progress: 0%;
+  --color-primary: #6f42c1; 
+  --color-secondary: #42c1a5;
+  --color-tertiary: #c17242;  
 }
 
 body {
