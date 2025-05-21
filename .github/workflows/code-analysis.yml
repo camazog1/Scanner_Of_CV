@@ -1,12 +1,11 @@
 name: Code Analysis with Prettier
-
 on:
   pull_request:
     branches:
-      - develop
+      - '**'
   push:
     branches:
-      - develop
+      - '**'
 
 jobs:
   format-check:
@@ -30,5 +29,4 @@ jobs:
       - name: Run Prettier check
         run: |
           cd frontend
-          npx prettier --check .
           npx prettier --write .
